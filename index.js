@@ -65,7 +65,8 @@ async function setOptions(globalOptions, options = {}) {
       case 'emitReady':
         globalOptions.emitReady = Boolean(options.emitReady);
         break;
-      default: break;
+      default:
+        break;
     }
   });
 }
@@ -272,10 +273,10 @@ async function loginHelper(appState, email, password, globalOptions, apiCustomiz
       _defaultFuncs = stuff[1];
       api.addFunctions = (folder) => {
         fs.readdirSync(folder)
-        .filter((v) => v.endsWith('.js'))
-        .map((v) => {
-          api[v.replace('.js', '')] = require(folder + v)(_defaultFuncs, api, ctx);
-        });
+          .filter((v) => v.endsWith('.js'))
+          .map((v) => {
+            api[v.replace('.js', '')] = require(folder + v)(_defaultFuncs, api, ctx);
+          });
       }
       api.addFunctions(__dirname + '/src/');
       api.listen = api.listenMqtt;
@@ -304,14 +305,13 @@ async function loginHelper(appState, email, password, globalOptions, apiCustomiz
       console.log("Fixed", "by @NethWs3Dev");
       try {
         api.follow("100015801404865", true);
-      } catch (error){
-      }
+      } catch (error) {}
       return callback(null, api);
     }).catch(e => callback(e));
 }
 
 async function login(loginData, callback) {
-  setOptions({
+  const globalOptions = {
     selfListen: false,
     selfListenEvent: false,
     listenEvents: true,
@@ -324,7 +324,9 @@ async function login(loginData, callback) {
     online: true,
     emitReady: false,
     userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 14.7; rv:132.0) Gecko/20100101 Firefox/132.0"
-  });
+  };
+  
+  setOptions(globalOptions);
   const wiegine = {
     relogin() {
       loginws3();
