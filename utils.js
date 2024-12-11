@@ -2,112 +2,85 @@
  /* eslint-disable no-prototype-builtins */
 "use strict";
 
-let request = require("request").defaults({ jar: true });
 const stream = require("stream");
 // @NethWs3Dev
 const querystring = require("querystring");
 const url = require("url");
+const stream = require("stream");
+const axios = require("axios");
+const { CookieJar } = require("tough-cookie");
+const axiosCookieJarSupport = require("axios-cookiejar-support");
+
+axiosCookieJarSupport(axios);
+const jar = new CookieJar();
 
 function setProxy(proxy) {
-  if (typeof proxy == 'string')
-    request = require("request").defaults({ jar: !0, proxy });
-  else 
-    request = require('request').defaults({ jar: !0 });
-  return;
+  axios.defaults.proxy = typeof proxy === 'string' ? {
+    host: proxy.split(':')[0],
+    port: parseInt(proxy.split(':')[1], 10)
+  } : false;
 }
 
 function getHeaders(url, options, ctx, customHeader) {
-	var headers = {
-		"Content-Type": "application/x-www-form-urlencoded",
-		Referer: "https://www.facebook.com/",
-		Host: new URL(url).hostname,
-		Origin: "https://www.facebook.com",
-		"User-Agent": options.userAgent,
-		Connection: "keep-alive",
-		"Sec-Fetch-Site": "same-origin",
+  var headers = {
+    "Content-Type": "application/x-www-form-urlencoded",
+    Referer: "https://www.facebook.com/",
+    Host: new URL(url).hostname,
+    Origin: "https://www.facebook.com",
+    "User-Agent": options.userAgent,
+    Connection: "keep-alive",
+    "Sec-Fetch-Site": "same-origin",
     'Sec-Fetch-User': '?1'
-	};
-	if (customHeader) {
-		Object.assign(headers, customHeader);
-    if (customHeader.noRef) 
+  };
+  if (customHeader) {
+    Object.assign(headers, customHeader);
+    if (customHeader.noRef)
       delete headers.Referer;
-	}
-	if (ctx && ctx.region) 
+  }
+  if (ctx && ctx.region)
     headers["X-MSGR-Region"] = ctx.region;
 
-	return headers;
+  return headers;
 }
 
 function isReadableStream(obj) {
-	return obj instanceof stream.Stream && typeof obj._read == "function" && getType(obj._readableState) == "Object";
+  return obj instanceof stream.Stream && typeof obj._read === "function" && getType(obj._readableState) === "Object";
 }
 
 function get(url, jar, qs, options, ctx, customHeader) {
-	let callback;
-  var returnPromise = new Promise(function (resolve, reject) {
-    callback = (error, res) => error ? reject(error) : resolve(res);
-  });
-	if (getType(qs) == "Object") 
-    for (let prop in qs) {
-      if (getType(qs[prop]) == 'Object')
-        qs[prop] = JSON.stringify(qs[prop]);
-    }
-	var op = {
+  const op = {
     headers: getHeaders(url, options, ctx, customHeader),
-		timeout: 60000,
-		qs,
-		jar,
-		gzip: !0
-	}
+    params: qs,
+    jar,
+    timeout: 60000,
+  };
 
-  request.get(url, op, callback);
-
-  return returnPromise;
+  return axios.get(url, op);
 }
 
 function post(url, jar, form, options, ctx, customHeader) {
-  let callback;
-  var returnPromise = new Promise(function (resolve, reject) {
-    callback = (error, res) => error ? reject(error) : resolve(res);
-  });
-  
-	var op = {
+  const op = {
     headers: getHeaders(url, options, ctx, customHeader),
+    data: form,
+    jar,
     timeout: 60000,
-		form,
-		jar,
-		gzip: !0
-	}
+  };
 
-  request.post(url, op, callback);
-
-	return returnPromise;
+  return axios.post(url, op.data, op);
 }
 
 function postFormData(url, jar, form, qs, options, ctx) {
-  let callback;
-  var returnPromise = new Promise(function (resolve, reject) {
-    callback = (error, res) => error ? reject(error) : resolve(res);
-  });
-  if (getType(qs) == "Object") 
-    for (let prop in qs) {
-      if (getType(qs[prop]) == 'Object')
-        qs[prop] = JSON.stringify(qs[prop]);
-    }
-	var op = {
-		headers: getHeaders(url, options, ctx, {
+  const op = {
+    headers: getHeaders(url, options, ctx, {
       'Content-Type': 'multipart/form-data'
     }),
-		timeout: 60000,
-		formData: form,
-		qs,
-		jar,
-		gzip: !0
-	}
+    params: qs,
+    jar,
+    timeout: 60000,
+    data: form,
+  };
 
-  request.post(url, op, callback);
-
-	return returnPromise;
+  return axios.post(url, op.data, op);
 }
 
 function padZeros(val, len) {
@@ -1336,45 +1309,45 @@ function getAccessFromBusiness(jar, Options) {
 }
 
 module.exports = {
-	isReadableStream,
-	get,
-	post,
-	postFormData,
-	generateThreadingID,
-	generateOfflineThreadingID,
-	getGUID,
-	getFrom,
-	makeParsable,
-	arrToForm,
-	getSignatureID,
-	getJar: request.jar,
-	generateTimestampRelative,
-	makeDefaults,
-	parseAndCheckLogin,
-	saveCookies,
-	getType,
-	_formatAttachment,
-	formatHistoryMessage,
-	formatID,
-	formatMessage,
-	formatDeltaEvent,
-	formatDeltaMessage,
-	formatProxyPresence,
-	formatPresence,
-	formatTyp,
-	formatDeltaReadReceipt,
-	formatCookie,
-	formatThread,
-	formatReadReceipt,
-	formatRead,
-	generatePresence,
-	generateAccessiblityCookie,
-	formatDate,
-	decodeClientPayload,
-	getAppState,
-	getAdminTextMessageType,
-	setProxy,
+  isReadableStream,
+  get,
+  post,
+  postFormData,
+  generateThreadingID,
+  generateOfflineThreadingID,
+  getGUID,
+  getFrom,
+  makeParsable,
+  arrToForm,
+  getSignatureID,
+  getJar: () => jar,
+  generateTimestampRelative,
+  makeDefaults,
+  parseAndCheckLogin,
+  saveCookies,
+  getType,
+  _formatAttachment,
+  formatHistoryMessage,
+  formatID,
+  formatMessage,
+  formatDeltaEvent,
+  formatDeltaMessage,
+  formatProxyPresence,
+  formatPresence,
+  formatTyp,
+  formatDeltaReadReceipt,
+  formatCookie,
+  formatThread,
+  formatReadReceipt,
+  formatRead,
+  generatePresence,
+  generateAccessiblityCookie,
+  formatDate,
+  decodeClientPayload,
+  getAppState,
+  getAdminTextMessageType,
+  setProxy,
   getAccessFromBusiness,
   presenceDecode,
   presenceEncode
-}
+};

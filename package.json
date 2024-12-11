@@ -31,6 +31,7 @@
         "cheerio": "^0.22.0",
         "https-proxy-agent": "^4.0.0",
         "mqtt": "^3.0.0",
+        "tough-cookie": "^5.0.0",
         "websocket-stream": "^5.5.0"
     },
     "devDependencies": {
