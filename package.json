@@ -1,6 +1,6 @@
 {
     "name": "ws3-fca",
-    "version": "1.0.10",
+    "version": "1.0.11",
     "description": "It stands for Facebook Chat API.",
     "main": "index.js",
     "scripts": {
@@ -31,6 +31,7 @@
         "cheerio": "^0.22.0",
         "https-proxy-agent": "^4.0.0",
         "mqtt": "^3.0.0",
+        "request": "^2.88.2",
         "websocket-stream": "^5.5.0"
     },
     "devDependencies": {
