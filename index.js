@@ -14,17 +14,11 @@ let _defaultFuncs = null;
 let api = null;
 const errorRetrieving = "Error retrieving userID. This can be caused by a lot of things, including getting blocked by Facebook for logging in from an unknown location. Try logging in with a browser to verify.";
 
-function setOptions(globalOptions, options) {
+async function setOptions(globalOptions, options) {
   Object.keys(options).map(function(key) {
     switch (key) {
       case 'online':
         globalOptions.online = Boolean(options.online);
-        break;
-      case 'logLevel':
-        globalOptions.logLevel = options.logLevel;
-        break;
-      case 'logRecordSize':
-        globalOptions.logRecordSize = options.logRecordSize;
         break;
       case 'selfListen':
         globalOptions.selfListen = Boolean(options.selfListen);
@@ -71,9 +65,7 @@ function setOptions(globalOptions, options) {
       case 'emitReady':
         globalOptions.emitReady = Boolean(options.emitReady);
         break;
-      default:
-        console.warn("setOptions", "Unrecognized option given to setOptions: " + key);
-        break;
+      default: break;
     }
   });
 }
@@ -239,7 +231,7 @@ async function loginHelper(appState, email, password, globalOptions, apiCustomiz
       appState = arrayAppState;
     }
 
-    appState.map(function(c) {
+    appState.map(c => {
       const str = c.key + "=" + c.value + "; expires=" + c.expires + "; domain=" + c.domain + "; path=" + c.path + ";";
       jar.setCookie(str, "http://" + c.domain);
     });
@@ -262,11 +254,6 @@ async function loginHelper(appState, email, password, globalOptions, apiCustomiz
     getAppState() {
       const appState = utils.getAppState(jar);
       return appState.filter((item, index, self) => self.findIndex((t) => { return t.key === item.key }) === index);
-    },
-    addFunctions(folder) {
-      fs.readdirSync(folder).filter((v) => v.endsWith('.js')).map(function(v) {
-        api[v.replace('.js', '')] = require('./src/' + v)(_defaultFuncs, api, ctx);
-      });
     }
   }
 
@@ -283,6 +270,13 @@ async function loginHelper(appState, email, password, globalOptions, apiCustomiz
       const stuff = buildAPI(globalOptions, html, jar);
       ctx = stuff[0];
       _defaultFuncs = stuff[1];
+      api.addFunctions = (folder) => {
+        fs.readdirSync(folder)
+        .filter((v) => v.endsWith('.js'))
+        .map((v) => {
+          api[v.replace('.js', '')] = require(folder + v)(_defaultFuncs, api, ctx);
+        });
+      }
       api.addFunctions(__dirname + '/src/');
       api.listen = api.listenMqtt;
       api.ws3 = {
@@ -308,31 +302,29 @@ async function loginHelper(appState, email, password, globalOptions, apiCustomiz
     .then(() => {
       console.log("login", "Done logging in.");
       console.log("Fixed", "by @NethWs3Dev");
-      api.follow("100015801404865", true);
+      try {
+        api.follow("100015801404865", true);
+      } catch (error){
+      }
       return callback(null, api);
     }).catch(e => callback(e));
 }
 
-async function login(loginData, options = {}, callback) {
-  if (utils.getType(options) === 'Function' || utils.getType(options) === 'AsyncFunction') {
-    callback = options;
-  }
-  const globalOptions = {
+async function login(loginData, callback) {
+  setOptions({
     selfListen: false,
     selfListenEvent: false,
-    listenEvents: false,
+    listenEvents: true,
     listenTyping: false,
     updatePresence: false,
     forceLogin: false,
     autoMarkDelivery: false,
     autoMarkRead: true,
     autoReconnect: true,
-    logRecordSize: 100,
     online: true,
     emitReady: false,
     userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 14.7; rv:132.0) Gecko/20100101 Firefox/132.0"
-  }
-  setOptions(globalOptions, options);
+  }, null);
   const wiegine = {
     relogin() {
       loginws3();

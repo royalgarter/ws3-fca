@@ -644,7 +644,8 @@ module.exports = function(defaultFuncs, api, ctx) {
       .post("https://www.facebook.com/api/graphqlbatch/", ctx.jar, form)
       .then(utils.parseAndCheckLogin(ctx, defaultFuncs))
       .then((resData) => {
-        if (utils.getType(resData) != "Array") throw { error: "Not logged in", res: resData };
+        if (utils.getType(resData) != "Array")
+        throw { error: "Not logged in", res: resData };
         if (resData[resData.length - 1].error_results > 0) {
           const errorL = resData[0].o0.errors;
           throw errorL;
