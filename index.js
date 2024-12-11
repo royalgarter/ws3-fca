@@ -1,14 +1,13 @@
 "use strict";
 
 /*
-
 hut-chat-api based
 Fixed by @NethWs3Dev
 Fixed autodismiss
-
 */
+
 const utils = require("./utils");
-// @NethWs3Dev
+const fs = require("fs");
 let checkVerified = null;
 let ctx = null;
 let _defaultFuncs = null;
@@ -260,10 +259,15 @@ async function loginHelper(appState, email, password, globalOptions, apiCustomiz
 
   api = {
     setOptions: setOptions.bind(null, globalOptions),
-    getAppState: function getAppState() {
+    getAppState() {
       const appState = utils.getAppState(jar);
       return appState.filter((item, index, self) => self.findIndex((t) => { return t.key === item.key }) === index);
     },
+    addFunctions(folder) {
+      fs.readdirSync(folder).filter((v) => v.endsWith('.js')).map(function(v) {
+        api[v.replace('.js', '')] = require('./src/' + v)(_defaultFuncs, api, ctx);
+      });
+    }
   }
 
   mainPromise = mainPromise
@@ -279,9 +283,7 @@ async function loginHelper(appState, email, password, globalOptions, apiCustomiz
       const stuff = buildAPI(globalOptions, html, jar);
       ctx = stuff[0];
       _defaultFuncs = stuff[1];
-      require('fs').readdirSync(__dirname + '/src/').filter((v) => v.endsWith('.js')).map(function(v) {
-        api[v.replace('.js', '')] = require('./src/' + v)(_defaultFuncs, api, ctx);
-      });
+      api.addFunctions(__dirname + '/src/');
       api.listen = api.listenMqtt;
       api.ws3 = {
         ...apiCustomized
@@ -332,7 +334,7 @@ async function login(loginData, options = {}, callback) {
   }
   setOptions(globalOptions, options);
   const wiegine = {
-    relogin(){
+    relogin() {
       loginws3();
     }
   }
