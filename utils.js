@@ -1,16 +1,10 @@
-
- /* eslint-disable no-prototype-builtins */
+/* eslint-disable no-prototype-builtins */
 "use strict";
 
 const querystring = require("querystring");
 const url = require("url");
 const stream = require("stream");
 const axios = require("axios");
-const { CookieJar } = require("tough-cookie");
-const axiosCookieJarSupport = require("axios-cookiejar-support");
-
-axiosCookieJarSupport(axios);
-const jar = new CookieJar();
 
 function setProxy(proxy) {
   axios.defaults.proxy = typeof proxy === 'string' ? {
