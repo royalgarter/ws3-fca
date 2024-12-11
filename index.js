@@ -328,8 +328,7 @@ async function login(loginData, options = {}, callback) {
     logRecordSize: 100,
     online: true,
     emitReady: false,
-    userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 14.7; rv:132.0) Gecko/20100101 Firefox/132.0",
-    refreshLogin: true
+    userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 14.7; rv:132.0) Gecko/20100101 Firefox/132.0"
   }
   setOptions(globalOptions, options);
   const wiegine = {
