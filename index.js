@@ -14,7 +14,7 @@ let _defaultFuncs = null;
 let api = null;
 const errorRetrieving = "Error retrieving userID. This can be caused by a lot of things, including getting blocked by Facebook for logging in from an unknown location. Try logging in with a browser to verify.";
 
-async function setOptions(globalOptions, options) {
+async function setOptions(globalOptions, options = {}) {
   Object.keys(options).map(function(key) {
     switch (key) {
       case 'online':
@@ -324,7 +324,7 @@ async function login(loginData, callback) {
     online: true,
     emitReady: false,
     userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 14.7; rv:132.0) Gecko/20100101 Firefox/132.0"
-  }, null);
+  });
   const wiegine = {
     relogin() {
       loginws3();
