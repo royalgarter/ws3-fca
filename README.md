@@ -1,6 +1,6 @@
 This repo is a fork from main repo and will usually have new features bundled faster than main repo (and maybe bundle some bugs, too).
 
-![wiegine](neth/banner.png)
+<img src="neth/banner.png">
 # Ws3 Facebook Chat API
 _@NethWs3Dev_
 
@@ -8,13 +8,13 @@ _@NethWs3Dev_
 
 [Join our group ChatBot Community](https://www.facebook.com/groups/coders.dev)
 
-![connected](neth/rindir.png)
+<img src="neth/rindir.png">
 
 # Added features:
 Once the error is detected it will automatically relogin the appstate.
 
 If the appstate itself is logged out it will automatically logged out and you can resubmit it again, But aside of that, if it has an automated behavior, it will relogin then it will dismiss automatically and refreshes the login
-![see here](neth/rindir2.png)
+<img src="neth/rindir2.png">
 
 No need to put on listenMqtt.
 
