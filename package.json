@@ -1,6 +1,6 @@
 {
     "name": "ws3-fca",
-    "version": "1.0.0-release",
+    "version": "1.0.1",
     "description": "It stands for Facebook Chat API.",
     "main": "index.js",
     "scripts": {
