@@ -54,10 +54,6 @@ module.exports = function (defaultFuncs, api, ctx) {
     content.payload = JSON.stringify(content.payload);
 
   /* if (isCallable(callback)) ctx.reqCallbacks[ctx.wsReqNumber] = callback; */
- ctx.mqttClient.publish('/ls_req', JSON.stringify(content), { qos: 1, retain: false });
-    require(__dirname.replace("/fca-unofficial/src", "/handlers")).modifymsg({
-      body: text,
-      msgId: messageID
-      });
+   ctx.mqttClient.publish('/ls_req', JSON.stringify(content), { qos: 1, retain: false });
   };
 }
