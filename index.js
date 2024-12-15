@@ -310,7 +310,12 @@ async function loginHelper(appState, email, password, globalOptions, apiCustomiz
     }).catch(e => callback(e));
 }
 
-async function login(loginData, callback) {
+async function login(loginData, options, callback) {
+  if (utils.getType(options) === 'Function' ||
+  utils.getType(options) === 'AsyncFunction') {
+        callback = options;
+        options = {};
+  }
   const globalOptions = {
     selfListen: false,
     selfListenEvent: false,
@@ -325,13 +330,14 @@ async function login(loginData, callback) {
     emitReady: false,
     userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 14.7; rv:132.0) Gecko/20100101 Firefox/132.0"
   };
-  
-  setOptions(globalOptions);
+
+  setOptions(globalOptions, options);
   const wiegine = {
     relogin() {
       loginws3();
     }
   }
+
   async function loginws3() {
     loginHelper(loginData?.appState, loginData?.email, loginData?.password, globalOptions, wiegine,
       (loginError, loginApi) => {
