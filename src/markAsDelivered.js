@@ -47,9 +47,6 @@ module.exports = function (defaultFuncs, api, ctx) {
       })
       .catch(function (err) {
         console.error("markAsDelivered", err);
-        if (utils.getType(err) == "Object" && err.error === "Not logged in.") {
-          ctx.loggedIn = false;
-        }
         return callback(err);
       });
 

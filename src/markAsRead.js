@@ -49,9 +49,6 @@ module.exports = function (defaultFuncs, api, ctx) {
       if (resData.error) {
         const err = resData.error;
         console.error("markAsRead", err);
-        if (utils.getType(err) == "Object" && err.error === "Not logged in.") {
-          ctx.loggedIn = false;
-        }
         callback(err);
         return err;
       }

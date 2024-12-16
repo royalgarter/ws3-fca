@@ -84,8 +84,9 @@ async function bypassAutoBehavior(resp, jar, globalOptions, appstate, ID) {
       server_timestamps: true,
       doc_id: 6339492849481770
     }
-    const kupal = () => {
+    const kupal = async () => {
       console.warn(`login | ${UID}`, "We suspect automated behavior on your account.");
+      //await new Promise(resolve => setTimeout(3*1000)); //add delay
       if (!isBehavior) isBehavior = true;
     };
     if (resp) {
@@ -105,35 +106,32 @@ async function bypassAutoBehavior(resp, jar, globalOptions, appstate, ID) {
           });
         } else return resp;
       } else return resp;
-    } else {
-      return utils.get('https://www.facebook.com/', jar, null, globalOptions).then(function(res) {
-        if (res.request.uri && res.request.uri.href.includes("https://www.facebook.com/checkpoint/")) {
-          if (res.request.uri.href.includes('601051028565049'))
-            return { Status: true, body: res.body }
-          else return { Status: true, body: res.body }
-        } else return { Status: false, body: res.body }
-      }).then(function(res) {
-        if (res.Status) {
-          const fb_dtsg = utils.getFrom(res.body, '["DTSGInitData",[],{"token":"', '","');
-          const jazoest = utils.getFrom(res.body, 'jazoest=', '",');
-          const lsd = utils.getFrom(res.body, "[\"LSD\",[],{\"token\":\"", "\"}");
-          return utils.post("https://www.facebook.com/api/graphql/", jar, {
-              ...FormBypass,
-              fb_dtsg,
-              jazoest,
-              lsd
-            }, globalOptions).then(utils.saveCookies(jar))
-            .then(res => {
-              kupal();
-              return res;
-            });
-        } else return res;
-      }).then(res => {
-        return utils.get('https://www.facebook.com/', jar, null, globalOptions, { noRef: true }).then(utils.saveCookies(jar))
-      }).then(res => {
-        return res;
-      });
     }
+  } catch (e) {
+    console.error("error", e);
+  }
+}
+
+async function checkIfSuspended(resp, appstate) {
+  try {
+    const appstateCUser = (appstate.find(i => i.key == 'c_user') || appstate.find(i => i.key == 'i_user'))
+    const UID = appstateCUser?.value;
+    if (resp) {
+      if (resp.request.uri && resp.request.uri.href.includes("https://www.facebook.com/checkpoint/")) {
+        if (resp.request.uri.href.includes('1501092823525282'))
+        const $ = cheerio.load(resp.body);
+        const accountName = $('div.3-8x._9uv3').text();
+        const suspensionDate = $('div._3-8n._9uu-._9wnx').text();
+        const accountStatus = $('h1._3-8n._9tzc._9w2d').text();
+        const reasonForSuspension = $('div._2pi3:last-child p._3-8n._9w2i._9w2k').text();
+        console.warn(`suspended`, `${accountName} (${UID}) has been suspended!`);
+        console.warn(`suspended`, suspensionDate);
+        console.warn(`suspended`, accountStatus);
+        console.warn(`suspended`, reasonForSuspension);
+        ctx = null;
+        return true;
+      }
+    } else return;
   } catch (e) {
     console.error("error", e);
   }
@@ -260,7 +258,7 @@ async function loginHelper(appState, email, password, globalOptions, apiCustomiz
 
   mainPromise = mainPromise
     .then(res => bypassAutoBehavior(res, jar, globalOptions, appState))
-    .then(async res => {
+    .then(async (res) => {
       const url = `https://www.facebook.com/home.php`;
       const php = await utils.get(url, jar, null, globalOptions);
       const body = php?.body;
@@ -274,9 +272,7 @@ async function loginHelper(appState, email, password, globalOptions, apiCustomiz
       api.addFunctions = (folder) => {
         fs.readdirSync(folder)
           .filter((v) => v.endsWith('.js'))
-          .map((v) => {
-            api[v.replace('.js', '')] = require(folder + v)(_defaultFuncs, api, ctx);
-          });
+          .map((v) => {});
       }
       api.addFunctions(__dirname + '/src/');
       api.listen = api.listenMqtt;
@@ -300,7 +296,9 @@ async function loginHelper(appState, email, password, globalOptions, apiCustomiz
   }
 
   mainPromise
-    .then(() => {
+    .then((res) => {
+      const suspension = await checkIfSuspended(res, appState);
+      if (suspension) return;
       console.log("login", "Done logging in.");
       console.log("Fixed", "by @NethWs3Dev");
       try {
@@ -312,9 +310,9 @@ async function loginHelper(appState, email, password, globalOptions, apiCustomiz
 
 async function login(loginData, options, callback) {
   if (utils.getType(options) === 'Function' ||
-  utils.getType(options) === 'AsyncFunction') {
-        callback = options;
-        options = {};
+    utils.getType(options) === 'AsyncFunction') {
+    callback = options;
+    options = {};
   }
   const globalOptions = {
     selfListen: false,

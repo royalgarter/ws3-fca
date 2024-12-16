@@ -4,7 +4,7 @@ const utils = require("../utils");
 // @NethWs3Dev
 
 module.exports = function (defaultFuncs, api, ctx) {
-  /**
+ /**
    * Refreshes the fb_dtsg and jazoest values.
    * @param {Function} callback
    * @returns {Promise}
