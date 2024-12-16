@@ -1,17 +1,12 @@
 "use strict";
 
-/*
-hut-chat-api based
-Fixed by @NethWs3Dev
-Fixed autodismiss
-*/
-
 const utils = require("./utils");
 const fs = require("fs");
 let checkVerified = null;
 let ctx = null;
 let _defaultFuncs = null;
 let api = null;
+
 const errorRetrieving = "Error retrieving userID. This can be caused by a lot of things, including getting blocked by Facebook for logging in from an unknown location. Try logging in with a browser to verify.";
 
 async function setOptions(globalOptions, options = {}) {
@@ -84,9 +79,8 @@ async function bypassAutoBehavior(resp, jar, globalOptions, appstate, ID) {
       server_timestamps: true,
       doc_id: 6339492849481770
     }
-    const kupal = async () => {
+    const kupal = () => {
       console.warn(`login | ${UID}`, "We suspect automated behavior on your account.");
-      //await new Promise(resolve => setTimeout(3*1000)); //add delay
       if (!isBehavior) isBehavior = true;
     };
     if (resp) {
@@ -116,26 +110,63 @@ async function checkIfSuspended(resp, appstate) {
   try {
     const appstateCUser = (appstate.find(i => i.key == 'c_user') || appstate.find(i => i.key == 'i_user'))
     const UID = appstateCUser?.value;
+    const suspendReasons = {};
     if (resp) {
       if (resp.request.uri && resp.request.uri.href.includes("https://www.facebook.com/checkpoint/")) {
-        if (resp.request.uri.href.includes('1501092823525282'))
-        const $ = cheerio.load(resp.body);
-        const accountName = $('div.3-8x._9uv3').text();
-        const suspensionDate = $('div._3-8n._9uu-._9wnx').text();
-        const accountStatus = $('h1._3-8n._9tzc._9w2d').text();
-        const reasonForSuspension = $('div._2pi3:last-child p._3-8n._9w2i._9w2k').text();
-        console.warn(`suspended`, `${accountName} (${UID}) has been suspended!`);
-        console.warn(`suspended`, suspensionDate);
-        console.warn(`suspended`, accountStatus);
-        console.warn(`suspended`, reasonForSuspension);
-        ctx = null;
-        return true;
-      }
-    } else return;
+        if (resp.request.uri.href.includes('1501092823525282')) {
+          const daystoDisable = resp.body?.match(/"log_out_uri":"(.*?)","title":"(.*?)"/);
+          if (daystoDisable && daystoDisable[2]) {
+            suspendReasons.durationInfo = daystoDisable[2];
+            console.error(`Suspension time remaining:`, suspendReasons.durationInfo);
+          }
+          const reasonDescription = resp.body?.match(/"reason_section_body":"(.*?)"/);
+          if (reasonDescription && reasonDescription[1]) {
+            suspendReasons.longReason = reasonDescription?.[1];
+            const reasonReplace = suspendReasons?.longReason?.toLowerCase()?.replace("your account, or activity on it, doesn't follow our community standards on ", "");
+            suspendReasons.shortReason = reasonReplace?.substring(0, 1).toUpperCase() + reasonReplace?.substring(1);
+            console.error(`Alert on ${UID}:`, `Account has been suspended!`);
+            console.error(`Why suspended:`, suspendReasons.longReason)
+            console.error(`Reason on suspension:`, suspendReasons.shortReason);
+          }
+          ctx = null;
+          return {
+            suspended: true,
+            suspendReasons
+          }
+        }
+      } else return;
+    }
+  } catch (error) {
+    return;
+  }
+}
+
+async function checkIfLocked(resp, appstate) {
+  try {
+    const appstateCUser = (appstate.find(i => i.key == 'c_user') || appstate.find(i => i.key == 'i_user'))
+    const UID = appstateCUser?.value;
+    const lockedReasons = {};
+    if (resp) {
+      if (resp.request.uri && resp.request.uri.href.includes("https://www.facebook.com/checkpoint/")) {
+        if (resp.request.uri.href.includes('828281030927956')) {
+          const lockDesc = resp.body.match(/"is_unvetted_flow":true,"title":"(.*?)"/);
+          if (lockDesc && lockDesc[1]) {
+            lockedReasons.reason = lockDesc[1];
+            console.error(`Alert on ${UID}:`, lockedReasons.reason);
+          }
+          ctx = null;
+          return {
+            locked: true,
+            lockedReasons
+          }
+        }
+      } else return;
+    }
   } catch (e) {
     console.error("error", e);
   }
 }
+
 
 function buildAPI(globalOptions, html, jar) {
   const maybeCookie = jar.getCookies("https://www.facebook.com").filter(function(val) {
@@ -261,7 +292,6 @@ async function loginHelper(appState, email, password, globalOptions, apiCustomiz
     .then(async (res) => {
       const url = `https://www.facebook.com/home.php`;
       const php = await utils.get(url, jar, null, globalOptions);
-      const body = php?.body;
       return php;
     })
     .then(async (res) => {
@@ -296,9 +326,11 @@ async function loginHelper(appState, email, password, globalOptions, apiCustomiz
   }
 
   mainPromise
-    .then((res) => {
-      const suspension = await checkIfSuspended(res, appState);
-      if (suspension) return;
+    .then(async (res) => {
+      const detectLocked = await checkIfLocked(res, appState);
+      if (detectLocked) throw detectLocked;
+      const detectSuspension = await checkIfSuspended(res, appState);
+      if (detectSuspension) throw detectSuspension;
       console.log("login", "Done logging in.");
       console.log("Fixed", "by @NethWs3Dev");
       try {
@@ -346,7 +378,7 @@ async function login(loginData, options, callback) {
             loginws3();
           }
           console.error("login", loginError);
-          callback(loginError);
+          return callback(loginError);
         }
         callback(null, loginApi);
       });

@@ -1,6 +1,6 @@
 This repo is a fork from main repo and will usually have new features bundled faster than main repo (and maybe bundle some bugs, too).
 
-![20241210_183831](https://github.com/user-attachments/assets/24ec00a7-4031-4607-ab3f-b6cb2ae36f4f)
+![20241210_183831](https://i.imgur.com/QpqujSt.jpeg)
 
 # Ws3 Facebook Chat API
 _@NethWs3Dev_
@@ -9,28 +9,33 @@ _@NethWs3Dev_
 
 [Join our group ChatBot Community](https://www.facebook.com/groups/coders.dev)
 
-![Screenshot_20241211-081752_1](https://github.com/user-attachments/assets/b1c76fae-7095-4c25-b335-7ccfa0e1d2a7)
+![Image](https://i.imgur.com/K7nxCnZ.jpeg)
 
 # Added features:
-Once the error is detected it will automatically relogin the appstate.
+* Once the error is detected it will automatically relogin the appstate.
+* If the appstate itself is logged out it will automatically logged out and you can resubmit it again, But aside of that, if it has an automated behavior, it will relogin then it will dismiss automatically and refreshes the login
 
-If the appstate itself is logged out it will automatically logged out and you can resubmit it again, But aside of that, if it has an automated behavior, it will relogin then it will dismiss automatically and refreshes the login
+![Image](https://i.imgur.com/rqYXgBn.jpeg)
 
-![Screenshot_20241209-220905_1](https://github.com/user-attachments/assets/5bbf6ddf-4dd6-41d7-843e-b71299f9da18)
+* Added a feature where if the account is locked/suspended, it will stop the login process and shows the information and why it was locked/suspended.
 
-
+![Image](https://i.imgur.com/R0lzR6R.jpeg)
+![Image](https://i.imgur.com/PPE3fB5.jpeg)
 No need to put on listenMqtt.
 
-Also some improvements:
-
+## Also some other features:
 * Added api.ws3.relogin()
 * Added api.stopListenMqtt()
 * Added api.getRegion()
+* Added api.setProfileGuard()
+* Added api.addFunctions()
 * Fixed api functions including api.follow()
-
 * Changed npmlog to normal console.log due to render log issues
+* Added a detection if it's locked or suspended (will show the information about the lock/suspension)
+* Tested on Mirai/Autobot (*try on Xavia or Goat*)
 
-* Based on [hut-chat-api](https://github.com/jonellcc/hut-chat-api) by [Jonell Magallanes](https://github.com/jonellcc)
+
+## Based on [hut-chat-api](https://github.com/jonellcc/hut-chat-api) by [Jonell Magallanes](https://github.com/jonellcc)
 
 
 Facebook now has an official API for chat bots [here](https://developers.facebook.com/docs/messenger-platform).
@@ -60,14 +65,11 @@ const login = require("ws3-fca");
 
 // Create simple echo bot
 login({
-  appstate: [] // YOUR APPSTATE,
-  email: "YOUR_EMAIL/NUMBER/USERNAME",
-  password: "YOUR_PASSWORD"
+  appState: []
 }, (err, api) => {
     if (err) return console.error(err);
-
-    api.listenMqtt((err, message) => {
-        api.sendMessage(message.body, message.threadID);
+    api.listenMqtt((err, event) => {
+        api.sendMessage(event.body, event.threadID);
     });
 });
 ```

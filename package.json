@@ -1,7 +1,7 @@
 {
     "name": "ws3-fca",
     "version": "1.0.13",
-    "description": "It stands for Facebook Chat API.",
+    "description": "The most advanced next-generation Facebook Chat API (FCA) by @NethWs3Dev (Kenneth Aceberos)",
     "main": "index.js",
     "scripts": {
         "start": "node index.js"
@@ -21,7 +21,6 @@
         "chat",
         "api",
         "fca",
-        "wiegine",
         "ws3-chat-api",
         "ws3-fca"
     ],
