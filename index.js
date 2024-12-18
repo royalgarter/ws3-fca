@@ -262,7 +262,7 @@ function buildAPI(globalOptions, html, jar) {
     fb_dtsg,
     fcaUsed: "ws3-fca"
   };
-  const defaultFuncs = utils.makeDefaults(html, i_userID || userID, ctx);
+  const defaultFuncs = utils.makeDefaults(html, userID, ctx);
   return [ctx, defaultFuncs];
 }
 
