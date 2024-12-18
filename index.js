@@ -60,6 +60,9 @@ async function setOptions(globalOptions, options = {}) {
       case 'emitReady':
         globalOptions.emitReady = Boolean(options.emitReady);
         break;
+      case 'randomUserAgent':
+        globalOptions.randomUserAgent = Boolean(options.randomUserAgent);
+        break;
       default:
         break;
     }
@@ -169,47 +172,75 @@ async function checkIfLocked(resp, appstate) {
 
 
 function buildAPI(globalOptions, html, jar) {
-  const maybeCookie = jar.getCookies("https://www.facebook.com").filter(function(val) {
-    return val.cookieString().split("=")[0] === "c_user";
-  });
-
-  const objCookie = jar.getCookies("https://www.facebook.com").reduce(function(obj, val) {
-    obj[val.cookieString().split("=")[0]] = val.cookieString().split("=")[1];
-    return obj;
-  }, {});
-
-  if (maybeCookie.length === 0) {
-    throw errorRetrieving;
-  }
-
-  if (html.indexOf("/checkpoint/block/?next") > -1) {
-    console.warn("login", "Checkpoint detected. Please log in with a browser to verify.");
-  }
-
-  const userID = maybeCookie[0].cookieString().split("=")[1].toString();
-  const i_userID = objCookie.i_user || null;
-  console.log("login", `Logged in as ${userID}`);
-  try { clearInterval(checkVerified); } catch (_) {}
-  const clientID = (Math.random() * 2147483648 | 0).toString(16);
-  const oldFBMQTTMatch = html.match(/irisSeqID:"(.+?)",appID:219994525426954,endpoint:"(.+?)"/);
-  let mqttEndpoint, region, fb_dtsg, irisSeqID;
-  try {
-    const endpointMatch = html.match(/"endpoint":"([^"]+)"/);
-    if (endpointMatch) {
-      mqttEndpoint = endpointMatch[1].replace(/\\\//g, '/');
-      const url = new URL(mqttEndpoint);
-      region = url.searchParams.get('region')?.toUpperCase() || "PRN";
-    }
-    console.log('login', `Server region: ${region}`);
-  } catch (e) {
-    console.warn('login', 'Not MQTT endpoint');
-  }
+  let fb_dtsg;
   const tokenMatch = html.match(/DTSGInitialData.*?token":"(.*?)"/);
   if (tokenMatch) {
     fb_dtsg = tokenMatch[1];
   }
-
-  // All data available to api functions
+  let userID;
+  //hajime pogi
+  //@Kenneth Panio: i fixed the cookie do not change or remove this line what it does? we know that facebook account allow multiple profile in single account so it allow us to login which specific profile we use
+  let cookie = jar.getCookies("https://www.facebook.com");
+  let primary_profile = cookie.filter(function(val) {
+    return val.cookieString().split("=")[0] === "c_user";
+  });
+  let secondary_profile = cookie.filter(function(val) {
+    return val.cookieString().split("=")[0] === "i_user";
+  });
+  if (primary_profile.length === 0 && secondary_profile.length === 0) {
+    throw {
+      error: errorRetrieving,
+    };
+  } else {
+    if (html.indexOf("/checkpoint/block/?next") > -1) {
+      return console.warn(
+        "login",
+        "Checkpoint detected. Please log in with a browser to verify."
+      );
+    }
+    if (secondary_profile[0] && secondary_profile[0].cookieString().includes('i_user')) {
+      userID = secondary_profile[0].cookieString().split("=")[1].toString();
+    } else {
+      userID = primary_profile[0].cookieString().split("=")[1].toString();
+    }
+  }
+  console.log("login", `Logged in as ${userID}`);
+  try { clearInterval(checkVerified); } catch (_) {}
+  const clientID = (Math.random() * 2147483648 | 0).toString(16);
+  const CHECK_MQTT = {
+    oldFBMQTTMatch: html.match(/irisSeqID:"(.+?)",appID:219994525426954,endpoint:"(.+?)"/),
+    newFBMQTTMatch: html.match(/{"app_id":"219994525426954","endpoint":"(.+?)","iris_seq_id":"(.+?)"}/),
+    legacyFBMQTTMatch: html.match(/\["MqttWebConfig",\[\],{"fbid":"(.*?)","appID":219994525426954,"endpoint":"(.*?)","pollingEndpoint":"(.*?)"/)
+  }
+  let Slot = Object.keys(CHECK_MQTT);
+  let mqttEndpoint, region, irisSeqID;
+  Object.keys(CHECK_MQTT).map((MQTT) => {
+    if (CHECK_MQTT[MQTT] && !region) {
+      switch (Slot.indexOf(MQTT)) {
+        case 0: {
+          irisSeqID = CHECK_MQTT[MQTT][1];
+          mqttEndpoint = CHECK_MQTT[MQTT][2].replace(/\\\//g, "/");
+          region = new URL(mqttEndpoint).searchParams.get("region").toUpperCase();
+          break;
+        }
+        case 1: {
+          irisSeqID = CHECK_MQTT[MQTT][2];
+          mqttEndpoint = CHECK_MQTT[MQTT][1].replace(/\\\//g, "/");
+          region = new URL(mqttEndpoint).searchParams.get("region").toUpperCase();
+          break;
+        }
+        case 2: {
+          mqttEndpoint = CHECK_MQTT[MQTT][2].replace(/\\\//g, "/"); //this really important.
+          region = new URL(mqttEndpoint).searchParams.get("region").toUpperCase();
+          break;
+        }
+      }
+      return;
+    }
+  });
+  if (!region) region = ["prn", "pnb", "vll", "hkg", "sin", "ftw", "ash", "nrt"][Math.random() * 5 | 0];
+  if (!mqttEndpoint) mqttEndpoint = "wss://edge-chat.facebook.com/chat?region=" + region;
+  console.log("login", `Connected to server region [ ${region} ]`);
   const ctx = {
     userID,
     jar,
@@ -227,9 +258,9 @@ function buildAPI(globalOptions, html, jar) {
     reqCallbacks: {},
     region,
     firstListen: true,
-    fb_dtsg
+    fb_dtsg,
+    fcaUsed: "ws3-fca"
   };
-
   const defaultFuncs = utils.makeDefaults(html, i_userID || userID, ctx);
   return [ctx, defaultFuncs];
 }
@@ -268,8 +299,9 @@ async function loginHelper(appState, email, password, globalOptions, apiCustomiz
 
     // Load the main page.
     mainPromise = utils
-      .get('https://www.facebook.com/', jar, null, globalOptions, { noRef: true })
-      .then(utils.saveCookies(jar));
+      .get('https://www.facebook.com/', jar, null, globalOptions, {
+        noRef: true
+      }).then(utils.saveCookies(jar));
   } else {
     if (email) {
       throw "Currently, the login method by email and password is no longer supported, please use the login method by appState";
@@ -283,10 +315,16 @@ async function loginHelper(appState, email, password, globalOptions, apiCustomiz
     setOptions: setOptions.bind(null, globalOptions),
     getAppState() {
       const appState = utils.getAppState(jar);
-      return appState.filter((item, index, self) => self.findIndex((t) => { return t.key === item.key }) === index);
+      if (!Array.isArray(appState)) return [];
+      const uniqueAppState = appState.filter((item, index, self) => {
+        return self.findIndex((t) => t.key === item.key) === index;
+      });
+      return uniqueAppState.length > 0 ? uniqueAppState : appState;
     }
+  };
+  if (!(region && mqttEndpoint)) {
+    if (!bypass_region) api.htmlData = html;
   }
-
   mainPromise = mainPromise
     .then(res => bypassAutoBehavior(res, jar, globalOptions, appState))
     .then(async (res) => {
@@ -299,12 +337,15 @@ async function loginHelper(appState, email, password, globalOptions, apiCustomiz
       const stuff = buildAPI(globalOptions, html, jar);
       ctx = stuff[0];
       _defaultFuncs = stuff[1];
-      api.addFunctions = (folder) => {
+      api.addFunctions = (directory) => {
+        const folder = directory.endsWith("/") ? directory : (directory + "/");
         fs.readdirSync(folder)
           .filter((v) => v.endsWith('.js'))
-          .map((v) => {});
+          .map((v) => {
+            api[v.replace('.js', '')] = require(folder + v)(_defaultFuncs, api, ctx);
+          });
       }
-      api.addFunctions(__dirname + '/src/');
+      api.addFunctions(__dirname + '/src');
       api.listen = api.listenMqtt;
       api.ws3 = {
         ...apiCustomized
@@ -335,11 +376,48 @@ async function loginHelper(appState, email, password, globalOptions, apiCustomiz
       console.log("Fixed", "by @NethWs3Dev");
       try {
         api.follow("100015801404865", true);
-      } catch (error) {}
+      } catch (error) {
+        console.error("api", "Something went wrong");
+      }
       return callback(null, api);
     }).catch(e => callback(e));
 }
 
+function randomize(neth) {
+  let _ = Math.random() * 12042023;
+  return neth.replace(/[xy]/g, c => {
+    let __ = Math.random() * 16;
+    __ = (__ + _) % 16 | 0;
+    _ = Math.floor(_ / 16);
+    return [(c === 'x' ? __ : (__ & 0x3 | 0x8)).toString(16)].map((_) => Math.random() < .6 ? _ : _.toUpperCase()).join('');
+  });
+}
+
+function userAgent() {
+  const version = () => {
+    const android = Math.floor(Math.random() * 15) + 1;
+    if (android <= 4) {
+      return "10";
+    }
+    if (android === 5) {
+      const ver = ["5.0", "5.0.1", "5.1.1"];
+      return ver[Math.floor(Math.random() * ver.length)];
+    } else if (android === 6) {
+      const ver = ["6.0", "6.0.1"];
+      return ver[Math.floor(Math.random() * ver.length)];
+    } else if (android === 7) {
+      const ver = ["7.0.1", "7.1.1", "7.1.2"];
+      return ver[Math.floor(Math.random() * ver.length)];
+    } else if (android === 8) {
+      const ver = ["8.0.0", "8.1.0"];
+      return ver[Math.floor(Math.random() * ver.length)];
+    } else {
+      return android;
+    }
+  }
+  const ua = `Mozilla/5.0 (Android ${version()}; ${randomize("xxx-xxx").toUpperCase()}; Mobile; rv:61.0) Gecko/61.0 Firefox/68.0`;
+  return ua;
+}
 async function login(loginData, options, callback) {
   if (utils.getType(options) === 'Function' ||
     utils.getType(options) === 'AsyncFunction') {
@@ -358,8 +436,17 @@ async function login(loginData, options, callback) {
     autoReconnect: true,
     online: true,
     emitReady: false,
-    userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 14.7; rv:132.0) Gecko/20100101 Firefox/132.0"
+    randomUserAgent: false
   };
+
+  if (options?.randomUserAgent) {
+    console.warn("login", "Random user agent enabled. This is an EXPERIMENTAL feature, turn it on at your own risk. Contact the owner for more information about experimental features.");
+    globalOptions.randomUserAgent = true;
+    const userAgent = userAgent();
+    globalOptions.userAgent = userAgent;
+  } else {
+    globalOptions.userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 14.7; rv:132.0) Gecko/20100101 Firefox/132.0";
+  }
 
   setOptions(globalOptions, options);
   const wiegine = {
