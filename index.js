@@ -11,7 +11,7 @@ let region;
 const errorRetrieving = "Error retrieving userID. This can be caused by a lot of things, including getting blocked by Facebook for logging in from an unknown location. Try logging in with a browser to verify.";
 
 async function setOptions(globalOptions, options = {}) {
-  Object.keys(options).map(function(key) {
+  Object.keys(options).map((key) => {
     switch (key) {
       case 'online':
         globalOptions.online = Boolean(options.online);
@@ -323,9 +323,6 @@ async function loginHelper(appState, email, password, globalOptions, apiCustomiz
       return uniqueAppState.length > 0 ? uniqueAppState : appState;
     }
   };
-  if (!(region && mqttEndpoint)) {
-    if (!bypass_region) api.htmlData = html;
-  }
   mainPromise = mainPromise
     .then(res => bypassAutoBehavior(res, jar, globalOptions, appState))
     .then(async (res) => {
