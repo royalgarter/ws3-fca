@@ -6,6 +6,7 @@ let checkVerified = null;
 let ctx = null;
 let _defaultFuncs = null;
 let api = null;
+let region;
 
 const errorRetrieving = "Error retrieving userID. This can be caused by a lot of things, including getting blocked by Facebook for logging in from an unknown location. Try logging in with a browser to verify.";
 
@@ -172,7 +173,6 @@ async function checkIfLocked(resp, appstate) {
 
 
 function buildAPI(globalOptions, html, jar) {
-  let region;
   let fb_dtsg;
   let userID;
   const tokenMatch = html.match(/DTSGInitialData.*?token":"(.*?)"/);
