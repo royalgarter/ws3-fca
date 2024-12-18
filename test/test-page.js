@@ -1,7 +1,7 @@
 var login = require('../index.js');
 var fs = require('fs');
 var assert = require('assert');
-
+/*029029*/
 var conf =  JSON.parse(process.env.testconfig || fs.readFileSync('test/test-config.json', 'utf8'));
 var credentials = {
   email: conf.user.email,
