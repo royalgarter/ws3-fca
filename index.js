@@ -172,12 +172,13 @@ async function checkIfLocked(resp, appstate) {
 
 
 function buildAPI(globalOptions, html, jar) {
+  let region;
   let fb_dtsg;
+  let userID;
   const tokenMatch = html.match(/DTSGInitialData.*?token":"(.*?)"/);
   if (tokenMatch) {
     fb_dtsg = tokenMatch[1];
   }
-  let userID;
   //hajime pogi
   //@Kenneth Panio: i fixed the cookie do not change or remove this line what it does? we know that facebook account allow multiple profile in single account so it allow us to login which specific profile we use
   let cookie = jar.getCookies("https://www.facebook.com");
@@ -213,7 +214,7 @@ function buildAPI(globalOptions, html, jar) {
     legacyFBMQTTMatch: html.match(/\["MqttWebConfig",\[\],{"fbid":"(.*?)","appID":219994525426954,"endpoint":"(.*?)","pollingEndpoint":"(.*?)"/)
   }
   let Slot = Object.keys(CHECK_MQTT);
-  let mqttEndpoint, region, irisSeqID;
+  let mqttEndpoint, irisSeqID;
   Object.keys(CHECK_MQTT).map((MQTT) => {
     if (CHECK_MQTT[MQTT] && !region) {
       switch (Slot.indexOf(MQTT)) {
