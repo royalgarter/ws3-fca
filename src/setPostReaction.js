@@ -73,13 +73,13 @@ module.exports = function (defaultFuncs, api, ctx) {
     }
 
     const form = {
-      av: ctx.i_userID || ctx.userID,
+      av: ctx.userID,
       fb_api_caller_class: "RelayModern",
       fb_api_req_friendly_name: "CometUFIFeedbackReactMutation",
       doc_id: "4769042373179384",
       variables: JSON.stringify({
         input: {
-          actor_id: ctx.i_userID || ctx.userID,
+          actor_id: ctx.userID,
           feedback_id: new Buffer("feedback:" + postID).toString("base64"),
           feedback_reaction: type,
           feedback_source: "OBJECT",

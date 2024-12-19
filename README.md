@@ -53,15 +53,9 @@ See [below](#projects-using-this-api) for projects using this API.
 ## Install
 If you just want to use ws3-fca, you should use this command:
 ```bash
-npm install ws3-fca
+npm install ws3-fca@latest
 ```
 It will download `ws3-fca` from NPM repositories
-
-### Bleeding edge
-If you want to use bleeding edge (directly from github) to test new features or submit bug report, this is the command for you:
-```bash
-npm install ws3-fca
-```
 
 ## Example Usage
 ```javascript

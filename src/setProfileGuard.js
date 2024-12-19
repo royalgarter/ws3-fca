@@ -10,7 +10,7 @@ module.exports = (defaultFuncs, api, ctx) => {
         error: "Please pass a boolean as a second argument.",
       };
     }
-    const uid = ctx.userID || ctx.i_userID;
+    const uid = ctx.userID;
     const form = {
       av: uid,
       variables: JSON.stringify({

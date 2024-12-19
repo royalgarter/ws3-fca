@@ -213,7 +213,7 @@ module.exports = function (defaultFuncs, api, ctx) {
     }
 
     const form = {
-      av: ctx.i_userID || ctx.userID,
+      av: ctx.userID,
       queries: JSON.stringify({
         o0: {
           // This doc_id was valid on 2020-07-20
