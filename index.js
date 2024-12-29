@@ -70,6 +70,37 @@ async function setOptions(globalOptions, options = {}) {
   });
 }
 
+async function updateDTSG(res, appstate, userId) {
+  try {
+    const appstateCUser = (appstate.find(i => i.key == 'i_user') || appstate.find(i => i.key == 'c_user'))
+    const UID = userId || appstateCUser.value;
+    if (!res || !res.body) {
+      throw new Error("Invalid response: Response body is missing.");
+    }
+    const fb_dtsg = utils.getFrom(res.body, '["DTSGInitData",[],{"token":"', '","');
+    const jazoest = utils.getFrom(res.body, 'jazoest=', '",');
+    if (fb_dtsg && jazoest) {
+      const filePath = 'fb_dtsg_data.json';
+      let existingData = {};
+      if (fs.existsSync(filePath)) {
+        const fileContent = fs.readFileSync(filePath, 'utf8');
+        existingData = JSON.parse(fileContent);
+      }
+      existingData[UID] = {
+        fb_dtsg,
+        jazoest
+      };
+      fs.writeFileSync(filePath, JSON.stringify(existingData, null, 2), 'utf8');
+      console.log('login', 'fb_dtsg_data.json updated successfully.');
+    }
+    return res;
+  } catch (error) {
+    console.error('updateDTSG', `Error updating DTSG for user ${UID}: ${error.message}`);
+    return;
+  }
+}
+
+
 let isBehavior = false;
 async function bypassAutoBehavior(resp, jar, globalOptions, appstate, ID) {
   try {
@@ -262,6 +293,21 @@ function buildAPI(globalOptions, html, jar) {
     fb_dtsg,
     fcaUsed: "ws3-fca"
   };
+  const refreshAction = () => {
+    const fbDtsgData = JSON.parse(fs.readFileSync('fb_dtsg_data.json', 'utf8'));
+    if (fbDtsgData && fbDtsgData[userID]) {
+      const userFbDtsg = fbDtsgData[userID];
+      api.refreshFb_dtsg(userFbDtsg)
+        .then(() => console.warn("login", `Fb_dtsg refreshed successfully for user ${userID}.`))
+        .catch((err) => console.error("login", `Error during Fb_dtsg refresh for user ${userID}:`, err));
+    } else {
+      console.error("login", `No fb_dtsg data found for user ${userID}.`);
+    }
+  }
+  console.log("cronjob", `fb_dtsg for ${userID} will automatically refresh at 12:00 AM in PH Time.`)
+  cron.schedule('0 0 * * *', () => refreshAction(), {
+    timezone: 'Asia/Manila'
+  });
   const defaultFuncs = utils.makeDefaults(html, userID, ctx);
   return [ctx, defaultFuncs];
 }
@@ -325,6 +371,7 @@ async function loginHelper(appState, email, password, globalOptions, apiCustomiz
   };
   mainPromise = mainPromise
     .then(res => bypassAutoBehavior(res, jar, globalOptions, appState))
+    .then(res => updateDTSG(res, appState))
     .then(async (res) => {
       const url = `https://www.facebook.com/home.php`;
       const php = await utils.get(url, jar, null, globalOptions);

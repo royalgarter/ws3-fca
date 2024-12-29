@@ -29,6 +29,7 @@ No need to put on listenMqtt.
 * Added api.getRegion()
 * Added api.setProfileGuard()
 * Added api.addFunctions()
+* Added refreshFb_dtsg (Facebook's dynamic token security generation): This will automatically refresh every 12:00 AM in GMT+8 PH time.
 * Fixed api functions including api.follow()
 * Changed npmlog to normal console.log due to render log issues
 * Added a detection if it's locked or suspended (will show the information about the lock/suspension)
