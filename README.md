@@ -1,55 +1,68 @@
-This repo is a fork from main repo and will usually have new features bundled faster than main repo (and maybe bundle some bugs, too).
+<div align="center">
 
 ![20241210_183831](https://i.imgur.com/QpqujSt.jpeg)
 
-# Ws3 Facebook Chat API
-_@NethWs3Dev_
-
-[If You have a problem with this fca you can contact me by clicking here.](https://www.facebook.com/kennethfranciscoaceberos)
-
-[Join our group ChatBot Community](https://www.facebook.com/groups/coders.dev)
+<h2 align="center"><b>Ws3 Facebook Chat API</b></h2>
 
 ![Image](https://i.imgur.com/K7nxCnZ.jpeg)
 
-# Added features:
-* Once the error is detected it will automatically relogin the appstate.
-* If the appstate itself is logged out it will automatically logged out and you can resubmit it again, But aside of that, if it has an automated behavior, it will relogin then it will dismiss automatically and refreshes the login
-
-![Image](https://i.imgur.com/rqYXgBn.jpeg)
-
-* Added a feature where if the account is locked/suspended, it will stop the login process and shows the information and why it was locked/suspended.
-
-![Image](https://i.imgur.com/R0lzR6R.jpeg)
-![Image](https://i.imgur.com/PPE3fB5.jpeg)
-No need to put on listenMqtt.
-
-## Also some other features:
-* Added api.ws3.relogin()
-* Added api.stopListenMqtt()
-* Added api.getRegion()
-* Added api.setProfileGuard()
-* Added api.addFunctions()
-* Added refreshFb_dtsg (Facebook's dynamic token security generation): This will automatically refresh every 12:00 AM in GMT+8 PH time.
-* Fixed api functions including api.follow()
-* Changed npmlog to normal console.log due to render log issues
-* Added a detection if it's locked or suspended (will show the information about the lock/suspension)
-* Tested on Mirai/Autobot (*try on Xavia or Goat*)
-
-
-## Based on [hut-chat-api](https://github.com/jonellcc/hut-chat-api) by [Jonell Magallanes](https://github.com/jonellcc)
-
-
-Facebook now has an official API for chat bots [here](https://developers.facebook.com/docs/messenger-platform).
-
-# Session Account Note:
-• You can use cookies editor available in kiwi browser, edge and chrome extension for pc and i recommended use Mozila Firefox to less logout or use this website if you have no acess these broswer specially iphone os user this use Appstate Getter https://joncll.serv00.net/apst.html
------------------------------------
-
-This API is the only way to automate chat functionalities on a user account. We do this by emulating the browser. This means doing the exact same GET/POST requests and tricking Facebook into thinking we're accessing the website normally. Because we're doing it this way, this API won't work with an auth token but requires the credentials of a Facebook account.
-
+This package is created by **NethWs3Dev.**
 _Disclaimer_: We are not responsible if your account gets banned for spammy activities such as sending lots of messages to people you don't know, sending messages very quickly, sending spammy looking URLs, logging in and out very quickly... Be responsible Facebook citizens.
 
 See [below](#projects-using-this-api) for projects using this API.
+
+# 🤖 Features:
+
+- [X] Once the error is detected it will automatically relogin the appstate.
+- [X] If the appstate itself is logged out it will automatically logged out and you can resubmit it again, But aside of that, if it has an automated behavior, it will relogin then it will dismiss automatically and refreshes the login.
+
+![Image](https://i.imgur.com/rqYXgBn.jpeg)
+- [X] Added a feature where if the account is locked/suspended, it will stop the login process and shows the information and why it was locked/suspended.
+
+![Image](https://i.imgur.com/R0lzR6R.jpeg)
+![Image](https://i.imgur.com/PPE3fB5.jpeg)
+
+No need to put on listenMqtt.
+
+- [X] Added api.ws3.relogin()
+- [X] Added api.stopListenMqtt()
+- [X] Added api.getRegion()
+- [X] Added api.setProfileGuard()
+- [X] Added api.addFunctions()
+- [X] Added api.getBotInitialData()
+- [X] Added refreshFb_dtsg (*Facebook's dynamic token security generation*): This will automatically refresh every 12:00 AM in GMT+8 PH time.
+- [X] Changed npmlog to normal console.log due to render log issues
+- [X] Added a detection if it's locked or suspended (*will show the information about the lock/suspension*)
+- [X] Added randomUserAgent on setOptions (*experimental*)
+- [X] Added bypassRegion on setOptions (*choose between PRN, PNB, HKG, SYD, VLL, LLA, SIN..., experimental*)
+- [X] Fixed userAgent on all mqttEvents
+- [X] Tested on Mirai/Autobot (*try on Xavia or Goat*)
+
+
+> [!TIP]
+You can use cookies editor available in kiwi browser, edge and chrome extension for PC.
+We the ws3-fca team/contributors are recommending you to use the Firefox app for less logout, or use this website if you have no access on these browsers specially iOS user. Use [Appstate Getter here](https://joncll.serv00.net/apst.html)
+
+# ❓ FAQ's:
+<div align="left">
+
+* If you encounter the error due to Promise reject issue, you can put this code in your index.js
+```javascript
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
+```
+</div>
+
+If you encounter errors on fca, you can contact me [here.](https://www.facebook.com/wieginesalpocialechavez)
+
+[JOIN OUR GROUP: ChatBot Community](https://www.facebook.com/groups/coders.dev)
+-----------------------------------
+</div>
+
+Facebook now has an official API for chat bots [here](https://developers.facebook.com/docs/messenger-platform).
+
+This API is the only way to automate chat functionalities on a user account. We do this by emulating the browser. This means doing the exact same GET/POST requests and tricking Facebook into thinking we're accessing the website normally. Because we're doing it this way, this API won't work with an auth token but requires the credentials of a Facebook account.
 
 ## Install
 If you just want to use ws3-fca, you should use this command:
@@ -65,7 +78,9 @@ const login = require("ws3-fca");
 // Create simple echo bot
 login({
   appState: []
-}, (err, api) => {
+}, {
+    //setOptions will be here
+} (err, api) => {
     if (err) return console.error(err);
     api.listenMqtt((err, event) => {
         api.sendMessage(event.body, event.threadID);
@@ -98,7 +113,9 @@ __Example (Basic Message)__
 ```js
 const login = require("ws3-fca");
 
-login({email: "FB_EMAIL", password: "FB_PASSWORD"}, (err, api) => {
+login({ 
+    appState: []
+}, (err, api) => {
     if(err) return console.error(err);
 
     var yourID = "000000000000000";
@@ -111,7 +128,9 @@ __Example (File upload)__
 ```js
 const login = require("ws3-fca");
 
-login({email: "FB_EMAIL", password: "FB_PASSWORD"}, (err, api) => {
+login({ 
+    appState: []
+}, (err, api) => {
     if(err) return console.error(err);
 
     // Note this example uploads an image called image.jpg
@@ -135,7 +154,9 @@ __Example__
 const fs = require("fs");
 const login = require("ws3-fca");
 
-var credentials = {email: "FB_EMAIL", password: "FB_PASSWORD"};
+var credentials = { 
+    appState: []
+};
 
 login(credentials, (err, api) => {
     if(err) return console.error(err);

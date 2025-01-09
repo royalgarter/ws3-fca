@@ -2,6 +2,55 @@
  /* eslint-disable no-prototype-builtins */
 "use strict";
 
+const defaultUserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 14.7; rv:132.0) Gecko/20100101 Firefox/132.0";
+function randomize(neth) {
+  let _ = Math.random() * 12042023;
+  return neth.replace(/[xy]/g, c => {
+    let __ = Math.random() * 16;
+    __ = (__ + _) % 16 | 0;
+    _ = Math.floor(_ / 16);
+    return [(c === 'x' ? __ : (__ & 0x3 | 0x8)).toString(16)].map((_) => Math.random() < .6 ? _ : _.toUpperCase()).join('');
+  });
+}
+
+const getRandom = arr => arr[Math.floor(Math.random() * arr.length)];
+function randomUserAgent() {
+    const platform = {
+    platform: ['Windows NT 10.0; Win64; x64', 'Macintosh; Intel Mac OS X 14.7; rv:132.0'],
+    browsers: {
+        chrome: ['122.0.0.0', '121.0.0.0'],
+        firefox: ['123.0', '122.0'],
+        edge: ['122.0.2365.92']
+       }
+    };
+    const browserName = getRandom(Object.keys(platform.browsers));
+    const version = getRandom(platform.browsers[browserName]);
+    const plat = getRandom(platform.platform);
+    const userAgentArray = [
+          defaultUserAgent,
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3",
+          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.1 Safari/605.1.15",
+          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:45.0) Gecko/20100101 Firefox/45.0",
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:66.0) Gecko/20100101 Firefox/66.0",
+          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/601.7.7 (KHTML, like Gecko) Version/9.1.2 Safari/601.7.7",
+          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/603.3.8 (KHTML, like Gecko) Version/10.1.2 Safari/603.3.8",
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.3",
+    ];
+    const ua = getRandom([
+    browserName === 'firefox' ? `Mozilla/5.0 (${plat}) Gecko/20100101 Firefox/${version}` : `Mozilla/5.0 (${plat}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${version} Safari/537.36`,
+    getRandom(userAgentArray)
+    ]);
+    return ua;
+}
+const headers = {
+	"content-type": "application/x-www-form-urlencoded",
+	"referer": "https://www.facebook.com/",
+	"origin": "https://www.facebook.com",
+	"connection": "keep-alive",
+	"Sec-Fetch-Site": "same-origin",
+    "Sec-Fetch-User": "?1",
+    "user-agent": randomUserAgent()
+};
 let request = require("request").defaults({ jar: true });
 const stream = require("stream");
 const querystring = require("querystring");
@@ -16,26 +65,24 @@ function setProxy(proxy) {
 }
 
 function getHeaders(url, options, ctx, customHeader) {
-	var headers = {
-		"Content-Type": "application/x-www-form-urlencoded",
-		Referer: "https://www.facebook.com/",
-		Host: new URL(url).hostname,
-		Origin: "https://www.facebook.com",
-		"User-Agent": options.userAgent,
-		Connection: "keep-alive",
-		"Sec-Fetch-Site": "same-origin",
-    'Sec-Fetch-User': '?1'
-	};
+    const headers1 = {
+        "host": new URL(url).hostname,
+        ...headers
+    }
 	if (customHeader) {
-		Object.assign(headers, customHeader);
+	  Object.assign(headers1, customHeader);
     if (customHeader.noRef) 
-      delete headers.Referer;
+      delete headers1.referer;
 	}
+    if (headers1["user-agent"]){
+    delete headers1["user-agent"];
+    headers1["user-agent"] = customHeader?.defaultUserAgent ? defaultUserAgent : customHeader?.customUserAgent ?? options?.userAgent ?? defaultUserAgent;
+    }
 	if (ctx && ctx.region) 
-    headers["X-MSGR-Region"] = ctx.region;
-
-	return headers;
+    headers1["X-MSGR-Region"] = ctx.region;
+	return headers1;
 }
+
 
 function isReadableStream(obj) {
 	return obj instanceof stream.Stream && typeof obj._read == "function" && getType(obj._readableState) == "Object";
@@ -1334,6 +1381,8 @@ function getAccessFromBusiness(jar, Options) {
   }
 }
 
+const meta = prop => new RegExp(`<meta property="${prop}" content="([^"]*)"`);
+
 module.exports = {
 	isReadableStream,
 	get,
@@ -1375,5 +1424,9 @@ module.exports = {
 	setProxy,
   getAccessFromBusiness,
   presenceDecode,
-  presenceEncode
-}
+  presenceEncode,
+  headers,
+  defaultUserAgent,
+  randomUserAgent,
+  meta
+};

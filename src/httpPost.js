@@ -42,7 +42,7 @@ module.exports = function (defaultFuncs, api, ctx) {
       utils
         .post(url, ctx.jar, form, ctx.globalOptions, ctx, customHeader)
         .then(function (resData) {
-          callback(null, resData.body.toString());
+          callback(null, resData.body);
         })
         .catch(function (err) {
           console.error("httpPost", err);
@@ -52,14 +52,13 @@ module.exports = function (defaultFuncs, api, ctx) {
       defaultFuncs
         .post(url, ctx.jar, form, {}, customHeader)
         .then(function (resData) {
-          callback(null, resData.body.toString());
-        })
+          callback(null, resData.body);
+          })
         .catch(function (err) {
           console.error("httpPost", err);
           return callback(err);
         });
     }
-
     return returnPromise;
   };
 };

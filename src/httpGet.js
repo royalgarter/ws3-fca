@@ -42,7 +42,7 @@ module.exports = function (defaultFuncs, api, ctx) {
       utils
         .get(url, ctx.jar, form, ctx.globalOptions, ctx, customHeader)
         .then(function (resData) {
-          callback(null, resData.body.toString());
+          callback(null, resData.body);
         })
         .catch(function (err) {
           console.error("httpGet", err);
@@ -52,14 +52,13 @@ module.exports = function (defaultFuncs, api, ctx) {
       defaultFuncs
         .get(url, ctx.jar, form, null, customHeader)
         .then(function (resData) {
-          callback(null, resData.body.toString());
+          callback(null, resData.body);
         })
         .catch(function (err) {
           console.error("httpGet", err);
           return callback(err);
         });
     }
-
     return returnPromise;
   };
 };

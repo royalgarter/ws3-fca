@@ -1,7 +1,6 @@
 "use strict";
 
 const utils = require("../utils");
-// @NethWs3Dev
 
 function formatData(data) {
   const retObj = {};
@@ -38,11 +37,11 @@ module.exports = function (defaultFuncs, api, ctx) {
       rejectFunc = reject;
     });
     if (!callback) {
-      callback = function (err, friendList) {
+      callback = (err, data) => {
         if (err) {
           return rejectFunc(err);
         }
-        resolveFunc(friendList);
+        resolveFunc(data);
       };
     }
     if (utils.getType(id) !== "Array") {

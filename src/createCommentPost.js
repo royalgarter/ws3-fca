@@ -1,7 +1,6 @@
 'use strict';
 
 var utils = require('../utils.js');
-var log = require('npmlog');
 
 module.exports = function (defaultFuncs, api, ctx) {
   function handleUpload(msg, form) {

@@ -1,7 +1,6 @@
 "use strict";
 
-const utils = require("ws3-fca/utils");
-
+const utils = require("../utils");
 // @NethWs3Dev
 module.exports = (defaultFuncs, api, ctx) => {
   return (guard, callback = () => {}) => {
