@@ -39,8 +39,7 @@ No need to put on listenMqtt.
 - [X] Tested on Mirai/Autobot (*try on Xavia or Goat*)
 
 
-> [!TIP]
-You can use cookies editor available in kiwi browser, edge and chrome extension for PC.
+> You can use cookies editor available in kiwi browser, edge and chrome extension for PC.
 We the ws3-fca team/contributors are recommending you to use the Firefox app for less logout, or use this website if you have no access on these browsers specially iOS user. Use [Appstate Getter here](https://joncll.serv00.net/apst.html)
 
 # ❓ FAQ's:
