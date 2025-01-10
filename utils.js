@@ -2,6 +2,11 @@
 "use strict";
 
 // ppp (pakahoy panio pogi)
+function isHasCallback(func) {
+	if (typeof func !== "function")
+		return false;
+	return func.toString().split("\n")[0].match(/(callback|cb)\s*\)/) !== null;
+}
 function promisifyPromise(promise) {
   const keys = Object.keys(promise);
   let promise_;
