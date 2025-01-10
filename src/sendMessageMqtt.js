@@ -1,6 +1,4 @@
 var utils = require("../utils");
-// @NethWs3Dev
-var bluebird = require("bluebird");
 
 module.exports = function (defaultFuncs, api, ctx) {
   function uploadAttachment(attachments, callback) {
@@ -45,8 +43,7 @@ module.exports = function (defaultFuncs, api, ctx) {
     }
 
     // resolve all promises
-    bluebird
-      .all(uploads)
+    Promise.all(uploads)
       .then(function (resData) {
         callback(null, resData);
       })
@@ -209,8 +206,6 @@ module.exports = function (defaultFuncs, api, ctx) {
       task.payload = JSON.stringify(task.payload);
     });
     form.payload = JSON.stringify(form.payload);
-    console.log(global.jsonStringifyColor(form, null, 2));
-
     return mqttClient.publish(
       "/ls_req",
       JSON.stringify(form),

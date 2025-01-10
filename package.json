@@ -1,6 +1,6 @@
 {
     "name": "ws3-fca",
-    "version": "1.0.30",
+    "version": "1.0.31-beta",
     "description": "The most advanced next-generation Facebook Chat API (FCA) by @NethWs3Dev (Kenneth Aceberos)",
     "main": "index.js",
     "scripts": {
@@ -30,7 +30,6 @@
     ],
     "dependencies": {
         "axios": "^1.6.5",
-        "bluebird": "^3.7.2",
         "cheerio": "^0.22.0",
         "https-proxy-agent": "^4.0.0",
         "mqtt": "^3.0.0",

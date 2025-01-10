@@ -48,8 +48,7 @@ const headers = {
 	"origin": "https://www.facebook.com",
 	"connection": "keep-alive",
 	"Sec-Fetch-Site": "same-origin",
-    "Sec-Fetch-User": "?1",
-    "user-agent": randomUserAgent()
+  "Sec-Fetch-User": "?1"
 };
 let request = require("request").defaults({ jar: true });
 const stream = require("stream");
@@ -65,10 +64,10 @@ function setProxy(proxy) {
 }
 
 function getHeaders(url, options, ctx, customHeader) {
-    const headers1 = {
+  const headers1 = {
         "host": new URL(url).hostname,
         ...headers
-    }
+  }
 	if (customHeader) {
 	  Object.assign(headers1, customHeader);
     if (customHeader.noRef) 

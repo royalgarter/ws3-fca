@@ -23,6 +23,6 @@ module.exports = function (defaultFuncs, api, ctx) {
 			request_id: ++count_req,
 			type: 4
 		};
-			await new Promise((resolve, reject) => mqttClient.publish('/ls_req', JSON.stringify(wsContent), {}, (err, _packet) => err ? reject(err) : resolve()));
+			await new Promise((resolve, reject) => ctx.mqttClient.publish('/ls_req', JSON.stringify(wsContent), {}, (err, _packet) => err ? reject(err) : resolve()));
 	};
 };
