@@ -2,11 +2,10 @@
 
 ![20241210_183831](https://i.imgur.com/QpqujSt.jpeg)
 
-<h2 align="center"><b>Ws3 Facebook Chat API</b></h2>
+<h2 align="center"><b>Ws3 Facebook Chat API</b></h2><br>This package is created by **NethWs3Dev.**
 
-![Image](https://i.imgur.com/K7nxCnZ.jpeg)
+![Image](https://i.imgur.com/nFCeYmQ.jpeg)
 
-This package is created by **NethWs3Dev.**
 _Disclaimer_: We are not responsible if your account gets banned for spammy activities such as sending lots of messages to people you don't know, sending messages very quickly, sending spammy looking URLs, logging in and out very quickly... Be responsible Facebook citizens.
 
 See [below](#projects-using-this-api) for projects using this API.
@@ -16,7 +15,7 @@ See [below](#projects-using-this-api) for projects using this API.
 - [X] Once the error is detected it will automatically relogin the appstate.
 - [X] If the appstate itself is logged out it will automatically logged out and you can resubmit it again, But aside of that, if it has an automated behavior, it will relogin then it will dismiss automatically and refreshes the login.
 
-![Image](https://i.imgur.com/rqYXgBn.jpeg)
+![Image](https://i.imgur.com/Pt6oCS0.jpeg)
 - [X] Added a feature where if the account is locked/suspended, it will stop the login process and shows the information and why it was locked/suspended.
 
 ![Image](https://i.imgur.com/R0lzR6R.jpeg)
