@@ -2,7 +2,18 @@
 "use strict";
 
 // ppp (pakahoy panio pogi)
-function isHasCallback(func) {
+function callbackToPromise(func) {
+  return (...args) => {
+    return new Promise((resolve, reject) => {
+      func(...args, (err, data) => {
+        if (err)
+          reject(err);
+        else
+          resolve(data);
+      });
+    });
+  };
+}function isHasCallback(func) {
 	if (typeof func !== "function")
 		return false;
 	return func.toString().split("\n")[0].match(/(callback|cb)\s*\)/) !== null;
