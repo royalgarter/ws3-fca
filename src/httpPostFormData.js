@@ -47,7 +47,7 @@ module.exports = function (defaultFuncs, api, ctx) {
       utils
         .postFormData(url, ctx.jar, form, ctx.globalOptions, ctx, customHeader)
         .then(function (resData) {
-          callback(null, resData.body);
+          callback(null, resData.body.toString());
         })
         .catch(function (err) {
           console.error("httpPostFormData", err);
@@ -57,7 +57,7 @@ module.exports = function (defaultFuncs, api, ctx) {
       defaultFuncs
         .postFormData(url, ctx.jar, form, null, customHeader)
         .then(function (resData) {
-          callback(null, resData.body);
+          callback(null, resData.body.toString());
         })
         .catch(function (err) {
           console.error("httpPostFormData", err);
