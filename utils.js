@@ -48,7 +48,8 @@ const headers = {
 	"origin": "https://www.facebook.com",
 	"connection": "keep-alive",
 	"Sec-Fetch-Site": "same-origin",
-  "Sec-Fetch-User": "?1"
+  "Sec-Fetch-User": "?1",
+  "User-Agent": defaultUserAgent
 };
 let request = require("request").defaults({ jar: true });
 const stream = require("stream");
@@ -57,9 +58,12 @@ const url = require("url");
 
 function setProxy(proxy) {
   if (typeof proxy == 'string')
-    request = require("request").defaults({ jar: !0, proxy });
+    request = require("request").defaults({
+      jar: true,
+      proxy
+    });
   else 
-    request = require('request').defaults({ jar: !0 });
+    request = require('request').defaults({ jar: true });
   return;
 }
 
