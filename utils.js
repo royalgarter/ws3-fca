@@ -72,18 +72,16 @@ function getHeaders(url, options, ctx, customHeader) {
         "host": new URL(url).hostname,
         ...headers
   }
+  if (headers1["User-Agent"]){
+    delete headers1["User-Agent"];
+    headers1["User-Agent"] = customHeader?.defaultUserAgent ? defaultUserAgent : (customHeader?.customUserAgent ?? options?.userAgent ?? defaultUserAgent);
+    }
+	if (ctx && ctx.region) headers1["X-MSGR-Region"] = ctx.region;
 	if (customHeader) {
 	  Object.assign(headers1, customHeader);
-    if (customHeader.noRef) 
-      delete headers1.referer;
+    if (customHeader.noRef) delete headers1.referer;
 	}
-    if (headers1["user-agent"]){
-    delete headers1["user-agent"];
-    headers1["user-agent"] = customHeader?.defaultUserAgent ? defaultUserAgent : customHeader?.customUserAgent ?? options?.userAgent ?? defaultUserAgent;
-    }
-	if (ctx && ctx.region) 
-    headers1["X-MSGR-Region"] = ctx.region;
-	return headers1;
+  return headers1;
 }
 
 
