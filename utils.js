@@ -131,10 +131,6 @@ function isReadableStream(obj) {
 }
 
 function get(url, jar, qs, options, ctx, customHeader) {
-  let callback;
-  var returnPromise = new Promise(function(resolve, reject) {
-    callback = (error, res) => error ? reject(error) : resolve(res);
-  });
   if (getType(qs) == "Object")
     for (let prop in qs) {
       if (getType(qs[prop]) == 'Object')
@@ -154,10 +150,6 @@ function get(url, jar, qs, options, ctx, customHeader) {
 }
 
 function post(url, jar, form, options, ctx, customHeader) {
-  let callback;
-  var returnPromise = new Promise(function(resolve, reject) {
-    callback = (error, res) => error ? reject(error) : resolve(res);
-  });
   const op = {
     headers: getHeaders(url, options, ctx, customHeader),
     timeout: 60 * 1000,
@@ -172,10 +164,6 @@ function post(url, jar, form, options, ctx, customHeader) {
 }
 
 function postFormData(url, jar, form, qs, options, ctx) {
-  let callback;
-  var returnPromise = new Promise(function(resolve, reject) {
-    callback = (error, res) => error ? reject(error) : resolve(res);
-  });
   if (getType(qs) == "Object")
     for (let prop in qs) {
       if (getType(qs[prop]) == 'Object')
@@ -183,7 +171,7 @@ function postFormData(url, jar, form, qs, options, ctx) {
     }
   const op = {
     headers: getHeaders(url, options, ctx, {
-      'Content-Type': 'multipart/form-data'
+      'content-type': 'multipart/form-data'
     }),
     timeout: 60 * 1000,
     url,
