@@ -1,59 +1,6 @@
 /* eslint-disable no-prototype-builtins */
 "use strict";
 
-// ppp (pakahoy panio pogi)
-function callbackToPromise(func) {
-  return (...args) => {
-    return new Promise((resolve, reject) => {
-      func(...args, (err, data) => {
-        if (err)
-          reject(err);
-        else
-          resolve(data);
-      });
-    });
-  };
-}function isHasCallback(func) {
-	if (typeof func !== "function")
-		return false;
-	return func.toString().split("\n")[0].match(/(callback|cb)\s*\)/) !== null;
-}
-function promisifyPromise(promise) {
-  const keys = Object.keys(promise);
-  let promise_;
-  if (
-    typeof promise === "function" &&
-    isHasCallback(promise)
-  )
-    promise_ = callbackToPromise(promise);
-  else
-    promise_ = promise;
-  for (const key of keys) {
-    if (!promise[key]?.toString)
-      continue;
-    if (
-      typeof promise[key] === "function" &&
-      isHasCallback(promise[key])
-    ) {
-      promise_[key] = callbackToPromise(promise[key]);
-    }
-    else {
-      promise_[key] = promise[key];
-    }
-  }
-  return promise_;
-}
-
-function randomize(neth) {
-  let _ = Math.random() * 12042023;
-  return neth.replace(/[xy]/g, c => {
-    let __ = Math.random() * 16;
-    __ = (__ + _) % 16 | 0;
-    _ = Math.floor(_ / 16);
-    return [(c === 'x' ? __ : (__ & 0x3 | 0x8)).toString(16)].map((_) => Math.random() < .6 ? _ : _.toUpperCase()).join('');
-  });
-}
-
 const getRandom = arr => arr[Math.floor(Math.random() * arr.length)];
 function randomUserAgent() {
     const platform = {
@@ -93,18 +40,20 @@ const headers = {
   "Sec-Fetch-User": "?1",
   "User-Agent": defaultUserAgent
 };
-let request = promisifyPromise(require("request").defaults({ jar: true }));
+let request = require("request").defaults({
+  jar: true
+});
 const stream = require("stream");
 const querystring = require("querystring");
 const url = require("url");
 
-function setProxy(url) {
-  request = promisifyPromise(require("request").defaults({
+function setProxy(proxy) {
+  request = require("request").defaults({
     jar: true,
-    ...(url && {
-      proxy: url
+    ...(proxy && {
+      proxy
     })
-  }));
+  });
   return;
 }
 
@@ -131,59 +80,73 @@ function isReadableStream(obj) {
 }
 
 function get(url, jar, qs, options, ctx, customHeader) {
-  if (getType(qs) == "Object")
+	let callback;
+  var returnPromise = new Promise(function (resolve, reject) {
+    callback = (error, res) => error ? reject(error) : resolve(res);
+  });
+	if (getType(qs) == "Object") 
     for (let prop in qs) {
       if (getType(qs[prop]) == 'Object')
         qs[prop] = JSON.stringify(qs[prop]);
     }
-  const op = {
+	var op = {
     headers: getHeaders(url, options, ctx, customHeader),
-    timeout: 60 * 1000,
-    url,
-    method: "GET",
-    qs,
-    jar,
-    gzip: true
-  };
+		timeout: 60000,
+		qs,
+		jar,
+		gzip: true
+	}
 
-  return request(op).then(res => Array.isArray(res) ? res[0] : res);
+  request.get(url, op, callback);
+
+  return returnPromise;
 }
 
 function post(url, jar, form, options, ctx, customHeader) {
-  const op = {
+  let callback;
+  var returnPromise = new Promise(function (resolve, reject) {
+    callback = (error, res) => error ? reject(error) : resolve(res);
+  });
+  
+	var op = {
     headers: getHeaders(url, options, ctx, customHeader),
-    timeout: 60 * 1000,
-    url,
-    method: "POST",
-    form,
-    jar,
-    gzip: true
-  };
+    timeout: 60000,
+		form,
+		jar,
+		gzip: true
+	}
 
-  return request(op).then(res => Array.isArray(res) ? res[0] : res);
+  request.post(url, op, callback);
+
+	return returnPromise;
 }
 
 function postFormData(url, jar, form, qs, options, ctx) {
-  if (getType(qs) == "Object")
+  let callback;
+  var returnPromise = new Promise(function (resolve, reject) {
+    callback = (error, res) => error ? reject(error) : resolve(res);
+  });
+  if (getType(qs) == "Object") 
     for (let prop in qs) {
       if (getType(qs[prop]) == 'Object')
         qs[prop] = JSON.stringify(qs[prop]);
     }
-  const op = {
-    headers: getHeaders(url, options, ctx, {
+	var op = {
+		headers: getHeaders(url, options, ctx, {
       'content-type': 'multipart/form-data'
     }),
-    timeout: 60 * 1000,
-    url,
-    method: "POST",
-    formData: form,
-    qs,
-    jar,
-    gzip: true
-  };
+		timeout: 60000,
+		formData: form,
+		qs,
+		jar,
+		gzip: true
+	}
 
-  return request(op).then(res => Array.isArray(res) ? res[0] : res);
+  request.post(url, op, callback);
+
+	return returnPromise;
 }
+
 
 function padZeros(val, len) {
   val = String(val);

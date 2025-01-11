@@ -214,7 +214,6 @@ module.exports = function (defaultFuncs, api, ctx) {
           console.error("Error publishing message: ", err);
           callback(err);
         } else {
-          console.log("Message published successfully with data: ", data);
           callback(null, data);
         }
       },
