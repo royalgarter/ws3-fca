@@ -388,7 +388,6 @@ async function loginHelper(appState, email, password, apiCustomized = {}, callba
       const resp = await utils.get(`https://www.facebook.com/home.php`, jar, null, globalOptions);
       const html = resp?.body;
       const stuff = await buildAPI(html, jar);
-      const api_Modifiers = {};
       ctx = stuff[0];
       _defaultFuncs = stuff[1];
       api.addFunctions = (directory) => {
@@ -402,12 +401,12 @@ async function loginHelper(appState, email, password, apiCustomized = {}, callba
       api.addFunctions(__dirname + '/src');
       api.listen = api.listenMqtt;
       if (globalOptions.useMessageMqtt){
-        api_Modifiers.sendMessage = api.sendMessageMqtt;
+        delete api.sendMessage;
+        api.sendMessage = api.sendMessageMqtt;
       }
       api.ws3 = {
         ...apiCustomized
       };
-      Object.assign(api, api_Modifiers);
       const botAcc = await api.getBotInitialData();
       if (!botAcc.error){
         console.log("login", `Successfully fetched account info!`);
