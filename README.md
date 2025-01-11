@@ -8,6 +8,8 @@
 
 _Disclaimer_: We are not responsible if your account gets banned for spammy activities such as sending lots of messages to people you don't know, sending messages very quickly, sending spammy looking URLs, logging in and out very quickly... Be responsible Facebook citizens.
 
+For changelogs and updates about ws3-fca and all projects, be sure to follow our [page](https://www.facebook.com/wyumibot).
+
 See [below](#projects-using-this-api) for projects using this API.
 
 # 🤖 Features:

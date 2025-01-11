@@ -388,22 +388,26 @@ async function loginHelper(appState, email, password, apiCustomized = {}, callba
       const resp = await utils.get(`https://www.facebook.com/home.php`, jar, null, globalOptions);
       const html = resp?.body;
       const stuff = await buildAPI(html, jar);
+      const api_Modifiers = {};
       ctx = stuff[0];
       _defaultFuncs = stuff[1];
       api.addFunctions = (directory) => {
         const folder = directory.endsWith("/") ? directory : (directory + "/");
         fs.readdirSync(folder)
-          .filter((v) => v.endsWith('.js'))
-          .map((v) => {
+          .filter(v => v.endsWith('.js'))
+          .map(v => {
             api[v.replace('.js', '')] = require(folder + v)(_defaultFuncs, api, ctx);
           });
       }
       api.addFunctions(__dirname + '/src');
       api.listen = api.listenMqtt;
-      if (globalOptions.useMessageMqtt) api.sendMessage = api.sendMessageMqtt;
+      if (globalOptions.useMessageMqtt){
+        api_Modifiers.sendMessage = api.sendMessageMqtt;
+      }
       api.ws3 = {
         ...apiCustomized
-      }
+      };
+      Object.assign(api, api_Modifiers);
       const botAcc = await api.getBotInitialData();
       if (!botAcc.error){
         console.log("login", `Successfully fetched account info!`);
