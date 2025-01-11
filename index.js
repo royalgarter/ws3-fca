@@ -74,12 +74,6 @@ async function setOptions(globalOptions_from, options = {}) {
       case 'bypassRegion':
         globalOptions_from.bypassRegion = options.bypassRegion;
         break;
-      case 'functionAfterLogin':
-        globalOptions_from.functionAfterLogin = options.functionAfterLogin;
-        break;
-      case 'useMessageMqtt':
-        globalOptions_from.useMessageMqtt = Boolean(options.useMessageMqtt);
-        break;
       default:
         break;
     }
@@ -400,10 +394,6 @@ async function loginHelper(appState, email, password, apiCustomized = {}, callba
       }
       api.addFunctions(__dirname + '/src');
       api.listen = api.listenMqtt;
-      if (globalOptions.useMessageMqtt){
-        delete api.sendMessage;
-        api.sendMessage = api.sendMessageMqtt;
-      }
       api.ws3 = {
         ...apiCustomized
       };
@@ -470,11 +460,9 @@ async function login(loginData, options, callback) {
     autoReconnect: true,
     online: true,
     emitReady: false,
-    randomUserAgent: false,
-    useMessageMqtt: false
+    randomUserAgent: false
   };
   if (options) Object.assign(globalOptions, options);
-    
    const loginws3 = () => {
       loginHelper(loginData?.appState, loginData?.email, loginData?.password, {
         relogin() {
