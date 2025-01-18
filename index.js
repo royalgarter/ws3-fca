@@ -287,7 +287,7 @@ function buildAPI(html, jar) {
   
   if (globalOptions.bypassRegion || !mqttEndpoint)
     mqttEndpoint = "wss://edge-chat.facebook.com/chat?region=" + region;
-  const ctx = {
+  var ctx = {
     userID,
     jar,
     clientID,
@@ -319,7 +319,7 @@ function buildAPI(html, jar) {
   }, {
     timezone: 'Asia/Manila'
   });
-  const defaultFuncs = utils.makeDefaults(html, userID, ctx);
+  var defaultFuncs = utils.makeDefaults(html, userID, ctx);
   return [ctx, defaultFuncs];
 }
 
