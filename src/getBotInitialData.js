@@ -19,7 +19,7 @@ module.exports = (defaultFuncs, api, ctx) => {
         resolveFunc(data);
       };
   }
-  api.httpGet(`https://www.facebook.com/profile.php?id=${ctx?.userID}`, null (err, data) => {
+  api.httpGet(`https://www.facebook.com/profile.php?id=${ctx?.userID}`, null, (err, data) => {
       if (err) throw err;
       const profileMatch = data.match(/"CurrentUserInitialData",\[\],\{(.*?)\},(.*?)\]/);
       if (profileMatch && profileMatch[1]){
