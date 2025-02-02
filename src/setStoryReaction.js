@@ -1,7 +1,7 @@
 'use strict';
 
 var utils = require('../utils.js');
-var log = require('npmlog');
+//NethWs3Dev
 
 module.exports = function(defaultFuncs, api, ctx) {
   return function setStoryReaction(storyID, react, callback) {

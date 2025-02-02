@@ -2,6 +2,7 @@
 "use strict";
 
 const getRandom = arr => arr[Math.floor(Math.random() * arr.length)];
+const defaultUserAgent = "facebookexternalhit/1.1";
 function randomUserAgent() {
     const platform = {
     platform: ['Windows NT 10.0; Win64; x64', 'Macintosh; Intel Mac OS X 14.7; rv:132.0'],
@@ -30,7 +31,6 @@ function randomUserAgent() {
     ]);
     return ua;
 }
-const defaultUserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 14.7; rv:132.0) Gecko/20100101 Firefox/132.0";
 const headers = {
   "content-type": "application/x-www-form-urlencoded",
   "referer": "https://www.facebook.com/",

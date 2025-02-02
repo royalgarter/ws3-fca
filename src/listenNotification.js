@@ -1,7 +1,7 @@
 'use strict';
 
 var utils = require('../utils');
-var log = require('npmlog');
+//NethWs3Dev
 var EventEmitter = require('node:events');
 
 function format(res, globalCallback) {

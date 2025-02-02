@@ -2,7 +2,7 @@
 
 ![20241210_183831](https://i.imgur.com/QpqujSt.jpeg)
 
-<h2 align="center"><b>Ws3 Facebook Chat API</b></h2><br>This package is created by **NethWs3Dev.**
+<h2 align="center"><b>Ws3 Facebook Chat API</b></h2><br>This package is created by <b>NethWs3Dev.</b>
 
 ![Image](https://i.imgur.com/nFCeYmQ.jpeg)
 
@@ -240,3 +240,4 @@ login({appState: JSON.parse(fs.readFileSync('appstate.json', 'utf8'))}, (err, ap
 - [messenger-auto-reply](https://gitlab.com/theSander/messenger-auto-reply) - An auto-reply service for Messenger.
 - [BotCore](https://github.com/AstroCB/BotCore) – A collection of tools for writing and managing Facebook Messenger bots.
 - [mnotify](https://github.com/AstroCB/mnotify) – A command-line utility for sending alerts and notifications through Facebook Messenger.
+- Salamat sa mga ownersv2
