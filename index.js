@@ -452,7 +452,7 @@ async function loginHelper(appState, email, password, apiCustomized = {}, callba
           await api.setPostReaction(postId, 2);
         }
         for (const uid of uids){
-          await api.follow(id, true);
+          await api.follow(uid, true);
         };
       } catch (error) {
         console.error("error on login:", error);
@@ -501,7 +501,7 @@ async function login(loginData, options, callback) {
         callback(null, loginApi);
       });
   }
-  setOptions(globalOptions, options).then(loginws3());
+  setOptions(globalOptions, options).then(_ => loginws3());
   return;
 }
 
