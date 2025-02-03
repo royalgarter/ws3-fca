@@ -42,8 +42,7 @@ const headers = {
   "origin": "https://www.facebook.com",
   "connection": "keep-alive",
   "Sec-Fetch-Site": "same-origin",
-  "Sec-Fetch-User": "?1",
-  "User-Agent": defaultUserAgent
+  "Sec-Fetch-User": "?1"
 };
 let request = require("request").defaults({
   jar: true
@@ -64,12 +63,13 @@ function setProxy(proxy) {
 function getHeaders(url, options, ctx, customHeader) {
   const headers1 = {
     "host": new URL(url).hostname,
-    ...headers
+    ...headers,
+    "User-Agent": customHeader?.customUserAgent ?? options?.userAgent ?? defaultUserAgent
   }
-  if (headers1["User-Agent"]) {
+  /*if (headers1["User-Agent"]) {
     delete headers1["User-Agent"];
     headers1["User-Agent"] = customHeader?.customUserAgent ?? options?.userAgent ?? defaultUserAgent;
-  }
+  }*/
   if (ctx && ctx.region) headers1["X-MSGR-Region"] = ctx.region;
   if (customHeader) {
     Object.assign(headers1, customHeader);

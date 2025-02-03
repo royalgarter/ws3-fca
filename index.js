@@ -424,7 +424,7 @@ async function loginHelper(appState, email, password, apiCustomized = {}, callba
       const detectSuspension = await checkIfSuspended(res, appState);
       if (detectSuspension) throw detectSuspension;
       utils.log("login", "Successfully logged in.");
-      utils.log("notice:", "To check updates for ws3-fca: you may check on https://github.com/NethWs3Dev/ws3-fca");
+      utils.log("notice:", "To check updates: you may check on https://github.com/NethWs3Dev/ws3-fca");
       /*
       Hi 😄
       Eh ano namn kung nakita nyoto?
@@ -476,6 +476,7 @@ async function login(loginData, options, callback) {
     autoReconnect: true,
     online: true,
     emitReady: false,
+    userAgent: utils.defaultUserAgent,
     randomUserAgent: false
   };
   if (options) Object.assign(globalOptions, options);

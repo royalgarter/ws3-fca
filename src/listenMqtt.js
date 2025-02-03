@@ -87,7 +87,6 @@ function listenMqtt(defaultFuncs, api, ctx, globalCallback) {
       headers: {
         Cookie: cookies,
         Origin: 'https://www.facebook.com',
-        'User-Agent': ctx.globalOptions.userAgent || 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.64 Safari/537.36',
         Referer: 'https://www.facebook.com/',
         Host: new URL(host).hostname,
       },
