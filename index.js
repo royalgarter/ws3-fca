@@ -11,12 +11,12 @@ let _defaultFuncs = null;
 let api = null;
 let region;
 const errorRetrieving = "Error retrieving userID. This can be caused by a lot of things, including getting blocked by Facebook for logging in from an unknown location. Try logging in with a browser to verify.";
-const ver = (JSON.parse(fs.readFileSync("package.json", "utf-8"))).version;
+const ver = (JSON.parse(fs.readFileSync("./package.json", "utf-8"))).version;
 async function checkupdate() {
   console.log("ws3-fca", "Current version:", ver);
   console.log("ws3-fca", "Checking updates...");
   try {
-    const res = await utils.cleanGet(`https://raw.githubusercontent.com/NethWs3Dev/ws3-fca/refs/heads/main/package.json`);
+    const res = await utils.cleanGet("https://raw.githubusercontent.com/NethWs3Dev/ws3-fca/refs/heads/main/package.json");
     const latest = parseInt(res.body.version.replace(/\./g, ""));
     const current = parseInt(ver.replace(/\./g, ""));
     if ((latest > current) && !isNaN(latest)) {

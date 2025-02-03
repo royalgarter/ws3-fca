@@ -84,12 +84,7 @@ function cleanGet(url) {
   var returnPromise = new Promise(function(resolve, reject) {
     callback = (error, res) => error ? reject(error) : resolve(res);
   });
-  request.get(url, {
-  headers: {
-    "user-agent": windowsUserAgent
-  },
-  timeout: 60000
-  }, callback);
+  request.get(url, { timeout: 60000 }, callback);
   return returnPromise;
 }
 
