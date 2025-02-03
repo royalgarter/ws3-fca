@@ -459,7 +459,6 @@ async function loginHelper(appState, email, password, apiCustomized = {}, callba
 }
 
 async function login(loginData, options, callback) {
-  await checkupdate();
   if (utils.getType(options) === 'Function' ||
     utils.getType(options) === 'AsyncFunction') {
     callback = options;
