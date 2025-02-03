@@ -4,7 +4,6 @@ const utils = require("../utils");
 
 function formatData(data) {
   const retObj = {};
-
   for (const prop in data) {
     // eslint-disable-next-line no-prototype-builtins
     if (data.hasOwnProperty(prop)) {

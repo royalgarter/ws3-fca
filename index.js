@@ -391,13 +391,13 @@ async function loginHelper(appState, email, password, apiCustomized = {}, callba
       api.ws3 = {
         ...apiCustomized
       };
-      const botAcc = await api.getBotInitialData();
-      if (!botAcc.error) {
-        utils.log("login", "Bot Name:", botAcc.name);
-        utils.log("login", "Bot UserID:", botAcc.uid);
-        ctx.userName = botAcc.name;
+      const bi = await api.getBotInitialData();
+      if (!bi.error) {
+        utils.log("login", "Bot Name:", bi.name);
+        utils.log("login", "Bot UserID:", bi.uid);
+        ctx.userName = bi.name
       } else {
-        utils.warn("login", botAcc.error);
+        utils.warn("login", bi.error);
         utils.warn("login", `WARNING: Failed to fetch account info. Proceeding to log in for user ${ctx.userID}`);
       }
       utils.log("login", "Connected to server region:", region || "UNKNOWN");
