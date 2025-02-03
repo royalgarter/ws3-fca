@@ -1,7 +1,7 @@
 "use strict";
 
 const utils = require("../utils");
-
+// Fixed by @NethWs3Dev
 function formatData(data) {
   const retObj = {};
   for (const prop in data) {
@@ -40,9 +40,9 @@ function formatData(data) {
   return retObj;
 }
 
-module.exports = function(defaultFuncs, api, ctx) {
-  return function getUserInfo(id, callback) {
-    let resolveFunc = () => {}
+module.exports = (defaultFuncs, api, ctx) => {
+  return (id, callback) => {
+    let resolveFunc = () => {};
     let rejectFunc = () => {};
     const returnPromise = new Promise(function(resolve, reject) {
       resolveFunc = resolve;
@@ -66,7 +66,7 @@ module.exports = function(defaultFuncs, api, ctx) {
     defaultFuncs
       .post("https://www.facebook.com/chat/user_info/", ctx.jar, form)
       .then(utils.parseAndCheckLogin(ctx, defaultFuncs))
-      .then(function(resData) {
+      .then(resData => {
         let kupal;
         if (resData.error === 3252001) {
           kupal = formatData(id);
@@ -74,11 +74,11 @@ module.exports = function(defaultFuncs, api, ctx) {
         kupal = formatData(resData.payload.profiles);
         return callback(null, kupal);
       })
-      .catch(function(err) {
+      .catch(err => {
         utils.error("getUserInfo", err);
         return callback(err);
       });
 
     return returnPromise;
-  };
+  }
 };
