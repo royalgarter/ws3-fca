@@ -393,9 +393,9 @@ async function loginHelper(appState, email, password, apiCustomized = {}, callba
       };
       const bi = await api.getBotInitialData();
       if (!bi.error) {
-        utils.log("login", "Bot Name:", bi.name);
-        utils.log("login", "Bot UserID:", bi.uid);
-        ctx.userName = bi.name
+        utils.log("login", "Hello,", bi.name);
+        utils.log("login", "My User ID:", bi.uid);
+        ctx.userName = bi.name;
       } else {
         utils.warn("login", bi.error);
         utils.warn("login", `WARNING: Failed to fetch account info. Proceeding to log in for user ${ctx.userID}`);

@@ -44,7 +44,7 @@ module.exports = (defaultFuncs, api, ctx) => {
   return (id, callback) => {
     let resolveFunc = () => {};
     let rejectFunc = () => {};
-    const returnPromise = new Promise(function(resolve, reject) {
+    const returnPromise = new Promise((resolve, reject) => {
       resolveFunc = resolve;
       rejectFunc = reject;
     });
@@ -61,18 +61,14 @@ module.exports = (defaultFuncs, api, ctx) => {
     }
     const form = {};
     id.map((v, i) => {
-      form["ids[" + i + "]"] = v;
+      form[`ids[${i}]`] = v;
     });
     defaultFuncs
       .post("https://www.facebook.com/chat/user_info/", ctx.jar, form)
       .then(utils.parseAndCheckLogin(ctx, defaultFuncs))
       .then(resData => {
-        let kupal;
-        if (resData.error === 3252001) {
-          kupal = formatData(id);
-        } else throw resData;
-        kupal = formatData(resData.payload.profiles);
-        return callback(null, kupal);
+        if (resData?.error && resData?.error !== 3252001) throw resData;
+        return callback(null, formatData(resData.payload.profiles || id));
       })
       .catch(err => {
         utils.error("getUserInfo", err);
