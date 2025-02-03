@@ -21,17 +21,30 @@ function formatData(data) {
         searchTokens: innerObj.searchTokens,
         alternateName: innerObj.alternateName
       };
+    } else {
+      retObj[prop] = {
+        name: "Facebook User",
+        firstName: "Facebook",
+        vanity: prop,
+        thumbSrc: "https://i.imgur.com/xPiHPW9.jpeg",
+        profileUrl: `https://www.facebook.com/profile.php?id=${prop}`,
+        gender: "[unknown-gender]",
+        type: "acc",
+        isFriend: false,
+        isBirthday: false,
+        searchTokens: [],
+        alternateName: ""
+      }
     }
   }
-
   return retObj;
 }
 
-module.exports = function (defaultFuncs, api, ctx) {
+module.exports = function(defaultFuncs, api, ctx) {
   return function getUserInfo(id, callback) {
     let resolveFunc = () => {}
     let rejectFunc = () => {};
-    const returnPromise = new Promise(function (resolve, reject) {
+    const returnPromise = new Promise(function(resolve, reject) {
       resolveFunc = resolve;
       rejectFunc = reject;
     });
@@ -53,13 +66,15 @@ module.exports = function (defaultFuncs, api, ctx) {
     defaultFuncs
       .post("https://www.facebook.com/chat/user_info/", ctx.jar, form)
       .then(utils.parseAndCheckLogin(ctx, defaultFuncs))
-      .then(function (resData) {
-        if (resData.error) {
-          throw resData;
-        }
-        return callback(null, formatData(resData.payload.profiles));
+      .then(function(resData) {
+        let kupal;
+        if (resData.error === 3252001) {
+          kupal = formatData(id);
+        } else throw resData;
+        kupal = formatData(resData.payload.profiles);
+        return callback(null, kupal);
       })
-      .catch(function (err) {
+      .catch(function(err) {
         utils.error("getUserInfo", err);
         return callback(err);
       });
@@ -67,4 +82,3 @@ module.exports = function (defaultFuncs, api, ctx) {
     return returnPromise;
   };
 };
- 
