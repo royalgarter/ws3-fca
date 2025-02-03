@@ -3,6 +3,7 @@
 
 const getRandom = arr => arr[Math.floor(Math.random() * arr.length)];
 const defaultUserAgent = "facebookexternalhit/1.1";
+const windowsUserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3";
 function randomUserAgent() {
     const platform = {
     platform: ['Windows NT 10.0; Win64; x64', 'Macintosh; Intel Mac OS X 14.7; rv:132.0'],
@@ -17,7 +18,7 @@ function randomUserAgent() {
     const plat = getRandom(platform.platform);
     const userAgentArray = [
           defaultUserAgent,
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3",
+          windowsUserAgent,
           "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.1 Safari/605.1.15",
           "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:45.0) Gecko/20100101 Firefox/45.0",
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:66.0) Gecko/20100101 Firefox/66.0",
@@ -46,7 +47,6 @@ let request = require("request").defaults({
 const stream = require("stream");
 const querystring = require("querystring");
 const url = require("url");
-
 function setProxy(proxy) {
   request = require("request").defaults({
     jar: true,
@@ -77,6 +77,20 @@ function getHeaders(url, options, ctx, customHeader) {
 
 function isReadableStream(obj) {
   return obj instanceof stream.Stream && typeof obj._read == "function" && getType(obj._readableState) == "Object";
+}
+
+function cleanGet(url) {
+  let callback;
+  var returnPromise = new Promise(function(resolve, reject) {
+    callback = (error, res) => error ? reject(error) : resolve(res);
+  });
+  request.get(url, {
+  headers: {
+    "user-agent": windowsUserAgent
+  },
+  timeout: 60000
+  }, callback);
+  return returnPromise;
 }
 
 function get(url, jar, qs, options, ctx, customHeader) {
@@ -1369,6 +1383,7 @@ const meta = prop => new RegExp(`<meta property="${prop}" content="([^"]*)"`);
 
 module.exports = {
   isReadableStream,
+  cleanGet,
   get,
   post,
   postFormData,
@@ -1411,6 +1426,7 @@ module.exports = {
   presenceEncode,
   headers,
   defaultUserAgent,
+  windowsUserAgent,
   randomUserAgent,
   meta
 };

