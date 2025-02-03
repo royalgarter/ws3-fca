@@ -48,7 +48,7 @@ module.exports = function (defaultFuncs, api, ctx) {
         return callback();
       })
       .catch(function (err) {
-        console.error("handleFriendRequest", err);
+        utils.error("handleFriendRequest", err);
         return callback(err);
       });
 

@@ -50,7 +50,7 @@ module.exports = function (defaultFuncs, api, ctx) {
           callback(null, resData.body.toString());
         })
         .catch(function (err) {
-          console.error("httpPostFormData", err);
+          utils.error("httpPostFormData", err);
           return callback(err);
         });
     } else {
@@ -60,7 +60,7 @@ module.exports = function (defaultFuncs, api, ctx) {
           callback(null, resData.body.toString());
         })
         .catch(function (err) {
-          console.error("httpPostFormData", err);
+          utils.error("httpPostFormData", err);
           return callback(err);
         });
     }

@@ -37,7 +37,7 @@ module.exports = function (defaultFuncs, api, ctx) {
         callback(null, resData);
       })
       .catch(function (err) {
-        console.error("handleUpload", err);
+        utils.error("handleUpload", err);
         return callback(err);
       });
   }
@@ -126,7 +126,7 @@ module.exports = function (defaultFuncs, api, ctx) {
           return callback(null, resData[0].data.profile_picture_set);
         })
         .catch(function (err) {
-          console.error("changeAvatar", err);
+          utils.error("changeAvatar", err);
           return callback(err);
         });
     });

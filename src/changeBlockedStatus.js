@@ -41,7 +41,7 @@ module.exports = function (defaultFuncs, api, ctx) {
         return callback();
       })
       .catch(function (err) {
-        console.error("changeBlockedStatus", err);
+        utils.error("changeBlockedStatus", err);
         return callback(err);
       });
     return returnPromise;

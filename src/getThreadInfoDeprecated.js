@@ -71,7 +71,7 @@ module.exports = function(defaultFuncs, api, ctx) {
           callback(null, utils.formatThread(threadData));
         })
         .catch(function(err) {
-          console.error("getThreadInfo", err);
+          utils.error("getThreadInfo", err);
           return callback(err);
         });
     });

@@ -46,7 +46,7 @@ module.exports = function (defaultFuncs, api, ctx) {
         return callback();
       })
       .catch(function (err) {
-        console.error("markAsDelivered", err);
+        utils.error("markAsDelivered", err);
         return callback(err);
       });
 

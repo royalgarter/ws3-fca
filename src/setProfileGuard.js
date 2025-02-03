@@ -37,7 +37,7 @@ module.exports = (defaultFuncs, api, ctx) => {
         return callback();
       })
       .catch(err => {
-        console.error("setProfileGuard", err);
+        utils.error("setProfileGuard", err);
         return callback(err);
       });;
   };

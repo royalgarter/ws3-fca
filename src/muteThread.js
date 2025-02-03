@@ -43,7 +43,7 @@ module.exports = function (defaultFuncs, api, ctx) {
         return callback();
       })
       .catch(function (err) {
-        console.error("muteThread", err);
+        utils.error("muteThread", err);
         return callback(err);
       });
 

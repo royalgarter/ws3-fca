@@ -33,7 +33,7 @@ module.exports = function (defaultFuncs, api, ctx) {
         if (data.error) throw new Error(data.error);
         return data.id || "Not found";
       } catch (e) {
-        console.error('getUID', "Error: " + e.message);
+        utils.error('getUID', "Error: " + e.message);
         throw new Error(e.message);
       }
     }
@@ -72,7 +72,7 @@ module.exports = function (defaultFuncs, api, ctx) {
         if (typeof data.error === 'string') throw new Error(data.error);
         return data.data.id || "Not found";
       } catch (e) {
-        console.error('getUID', "Error: " + e.message);
+        utils.error('getUID', "Error: " + e.message);
         throw new Error(e.message);
       }
     }
@@ -85,7 +85,7 @@ module.exports = function (defaultFuncs, api, ctx) {
         if (!isNaN(uid)) return uid;
         throw new Error("Unable to retrieve UID");
       } catch (e) {
-        console.error('getUID', "Error: " + e.message);
+        utils.error('getUID', "Error: " + e.message);
         throw new Error(e.message);
       }
     }
@@ -111,7 +111,7 @@ module.exports = function (defaultFuncs, api, ctx) {
         throw new Error('Invalid link. The link should be a Facebook link.');
       }
     } catch (e) {
-      console.error('getUID', "Error: " + e.message);
+      utils.error('getUID', "Error: " + e.message);
       return callback(null, e);
     }
     return returnPromise;

@@ -61,7 +61,7 @@ module.exports = function (defaultFuncs, api, ctx) {
         callback(null, resData);
       })
       .catch(function (err) {
-        console.error("uploadAttachment", err);
+        utils.error("uploadAttachment", err);
         return callback(err);
       });
   }
@@ -92,7 +92,7 @@ module.exports = function (defaultFuncs, api, ctx) {
         callback(null, resData.payload.share_data.share_params);
       })
       .catch(function (err) {
-        console.error("getUrl", err);
+        utils.error("getUrl", err);
         return callback(err);
       });
   }
@@ -109,7 +109,7 @@ module.exports = function (defaultFuncs, api, ctx) {
       }
       form["specific_to_list[" + threadID.length + "]"] = "fbid:" + ctx.userID;
       form["client_thread_id"] = "root:" + messageAndOTID;
-      console.log("sendMessage", "Sending message to multiple users: " + threadID);
+      utils.log("sendMessage", "Sending message to multiple users: " + threadID);
     } else {
       // This means that threadID is the id of a user, and the chat
       // is a single person chat
@@ -144,7 +144,7 @@ module.exports = function (defaultFuncs, api, ctx) {
 
         if (resData.error) {
           if (resData.error === 1545012) {
-            console.warn(
+            utils.warn(
               "sendMessage",
               "Got error 1545012. This might mean that you're not part of the conversation " +
               threadID
@@ -166,7 +166,7 @@ module.exports = function (defaultFuncs, api, ctx) {
         return callback(null, messageInfo);
       })
       .catch(function (err) {
-        console.error("sendMessage", err);
+        utils.error("sendMessage", err);
         return callback(err);
       });
   }
@@ -288,14 +288,14 @@ module.exports = function (defaultFuncs, api, ctx) {
         const offset = msg.body.indexOf(tag, mention.fromIndex || 0);
 
         if (offset < 0) {
-          console.warn(
+          utils.warn(
             "handleMention",
             'Mention for "' + tag + '" not found in message string.'
           );
         }
 
         if (mention.id == null) {
-          console.warn("handleMention", "Mention id should be non-null.");
+          utils.warn("handleMention", "Mention id should be non-null.");
         }
 
         const id = mention.id || 0;

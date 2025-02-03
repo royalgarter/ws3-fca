@@ -57,7 +57,7 @@ module.exports = function (defaultFuncs, api, ctx) {
         callback(null, data.map(formatData));
       })
       .catch(function (err) {
-        console.error("getUserID", err);
+        utils.error("getUserID", err);
         return callback(err);
       });
 

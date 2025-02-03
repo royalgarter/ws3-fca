@@ -67,7 +67,7 @@ module.exports = function (defaultFuncs, api, ctx) {
         return callback();
       })
       .catch(function (err) {
-        console.error("changeBio", err);
+        utils.error("changeBio", err);
         return callback(err);
       });
 

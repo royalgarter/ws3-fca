@@ -48,7 +48,7 @@ module.exports = function (defaultFuncs, api, ctx) {
         callback(null, resData);
       })
       .catch(function (err) {
-        console.error("uploadAttachment", err);
+        utils.error("uploadAttachment", err);
         return callback(err);
       });
   }
@@ -143,14 +143,14 @@ module.exports = function (defaultFuncs, api, ctx) {
         const offset = msg.body.indexOf(tag, mention.fromIndex || 0);
 
         if (offset < 0) {
-          console.warn(
+          utils.warn(
             "handleMention",
             'Mention for "' + tag + '" not found in message string.',
           );
         }
 
         if (mention.id == null) {
-          console.warn("handleMention", "Mention id should be non-null.");
+          utils.warn("handleMention", "Mention id should be non-null.");
         }
 
         const id = mention.id || 0;
@@ -211,7 +211,7 @@ module.exports = function (defaultFuncs, api, ctx) {
       JSON.stringify(form),
       function (err, data) {
         if (err) {
-          console.error("Error publishing message: ", err);
+          utils.error("Error publishing message: ", err);
           callback(err);
         } else {
           callback(null, data);

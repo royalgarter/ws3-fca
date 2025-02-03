@@ -50,7 +50,7 @@ module.exports = function (defaultFuncs, api, ctx) {
         return callback();
       })
       .catch(function (err) {
-        console.error("changeNickname", err);
+        utils.error("changeNickname", err);
         return callback(err);
       });
 

@@ -56,7 +56,7 @@ module.exports = function (defaultFuncs, api, ctx) {
         return callback();
       })
       .catch(function (err) {
-        console.error("handleMessageRequest", err);
+        utils.error("handleMessageRequest", err);
         return callback(err);
       });
 

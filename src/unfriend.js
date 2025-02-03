@@ -43,7 +43,7 @@ module.exports = function(defaultFuncs, api, ctx) {
         return callback();
       })
       .catch(function(err) {
-        console.error("unfriend", err);
+        utils.error("unfriend", err);
         return callback(err);
       });
 

@@ -60,7 +60,7 @@ module.exports = function (defaultFuncs, api, ctx) {
     if (!Array.isArray(userIDs)) userIDs = [userIDs];
     var [height, width] = size;
     if (!ctx.access_token) {
-      console.error('getAvatarUser', 'Cant get access_token');
+      utils.error('getAvatarUser', 'Cant get access_token');
       return cb('Cant get access_token');
     };
     
@@ -69,7 +69,7 @@ module.exports = function (defaultFuncs, api, ctx) {
         return cb(null, res);
       })
       .catch(function (err) {
-        console.error('getAvatarUser', err);
+        utils.error('getAvatarUser', err);
         return cb(err);
       });
 

@@ -129,7 +129,7 @@ function listenMqtt(defaultFuncs, api, ctx, globalCallback) {
     } else {
       globalCallback({ type: "stop_listen", error: "Connection refused: Server unavailable" }, null);
     }
-    console.warn("login", "Error detected. Will relogin automatically...");
+    utils.warn("login", "Error detected. Will relogin automatically...");
     api.ws3.relogin();
     return;
   });
@@ -176,7 +176,7 @@ function listenMqtt(defaultFuncs, api, ctx, globalCallback) {
     try {
       var jsonMessage = JSON.parse(message);
     } catch (ex) {
-      return console.error("listenMqtt", ex);
+      return utils.error("listenMqtt", ex);
     }
     if (topic === "/t_ms") {
       if (ctx.tmsWait && typeof ctx.tmsWait == "function") ctx.tmsWait();
@@ -421,7 +421,7 @@ function parseDelta(defaultFuncs, api, ctx, globalCallback, v) {
                   timestamp: parseInt(fetchData.timestamp_precise)
                 };
               })
-              .catch(err => console.error("forcedFetch", err))
+              .catch(err => utils.error("forcedFetch", err))
               .finally(function() {
                 if (ctx.globalOptions.autoMarkDelivery) markDelivery(ctx, api, callbackToReturn.threadID, callbackToReturn.messageID);
                 !ctx.globalOptions.selfListen && callbackToReturn.senderID === ctx.userID ? undefined : (function() { globalCallback(null, callbackToReturn); })();
@@ -517,7 +517,7 @@ function parseDelta(defaultFuncs, api, ctx, globalCallback, v) {
             var fetchData = resData[0].o0.data.message;
 
             if (utils.getType(fetchData) == "Object") {
-              console.log("forcedFetch", fetchData);
+              utils.log("forcedFetch", fetchData);
               switch (fetchData.__typename) {
                 case "ThreadImageMessage":
                   (!ctx.globalOptions.selfListen &&
@@ -541,7 +541,7 @@ function parseDelta(defaultFuncs, api, ctx, globalCallback, v) {
                     })();
                   break;
                 case "UserMessage":
-                  console.log("ff-Return", {
+                  utils.log("ff-Return", {
                     type: "message",
                     senderID: utils.formatID(fetchData.message_sender.id),
                     body: fetchData.message.text || "",
@@ -598,9 +598,9 @@ function parseDelta(defaultFuncs, api, ctx, globalCallback, v) {
                     isGroup: (fetchData.message_sender.id != tid.toString())
                   });
               }
-            } else console.error("forcedFetch", fetchData);
+            } else utils.error("forcedFetch", fetchData);
           })
-          .catch((err) => console.error("forcedFetch", err));
+          .catch((err) => utils.error("forcedFetch", err));
       }
       break;
     case "ThreadName":
@@ -624,11 +624,11 @@ function parseDelta(defaultFuncs, api, ctx, globalCallback, v) {
 function markDelivery(ctx, api, threadID, messageID) {
   if (threadID && messageID) {
     api.markAsDelivered(threadID, messageID, (err) => {
-      if (err) console.error("markAsDelivered", err);
+      if (err) utils.error("markAsDelivered", err);
       else {
         if (ctx.globalOptions.autoMarkRead) {
           api.markAsRead(threadID, (err) => {
-            if (err) console.error("markAsDelivered", err);
+            if (err) utils.error("markAsDelivered", err);
           });
         }
       }

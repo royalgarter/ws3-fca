@@ -36,7 +36,7 @@ module.exports = function (defaultFuncs, api, ctx) {
         return callback(null, photoUrl);
       })
       .catch((err) => {
-        console.error("resolvePhotoUrl", err);
+        utils.error("resolvePhotoUrl", err);
         return callback(err);
       });
 

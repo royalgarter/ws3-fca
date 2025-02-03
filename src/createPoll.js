@@ -62,7 +62,7 @@ module.exports = function (defaultFuncs, api, ctx) {
         return callback();
       })
       .catch(function (err) {
-        console.error("createPoll", err);
+        utils.error("createPoll", err);
         return callback(err);
       });
 

@@ -32,7 +32,6 @@ No need to put on listenMqtt.
 - [X] Added api.addFunctions()
 - [X] Added api.getBotInitialData()
 - [X] Added refreshFb_dtsg (*Facebook's dynamic token security generation*): This will automatically refresh every 12:00 AM in GMT+8 PH time.
-- [X] Changed npmlog to normal console.log due to render log issues
 - [X] Added a detection if it's locked or suspended (*will show the information about the lock/suspension*)
 - [X] Added randomUserAgent on setOptions (*experimental*)
 - [X] Added bypassRegion on setOptions (*choose between PRN, PNB, HKG, SYD, VLL, LLA, SIN..., experimental*)
@@ -81,7 +80,7 @@ login({
 }, {
     //setOptions will be here
 } (err, api) => {
-    if (err) return console.error(err);
+    if (err) return utils.error(err);
     api.listenMqtt((err, event) => {
         api.sendMessage(event.body, event.threadID);
     });

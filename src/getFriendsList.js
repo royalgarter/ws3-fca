@@ -74,7 +74,7 @@ module.exports = function (defaultFuncs, api, ctx) {
         callback(null, formatData(resData.payload));
       })
       .catch(function (err) {
-        console.error("getFriendsList", err);
+        utils.error("getFriendsList", err);
         return callback(err);
       });
 

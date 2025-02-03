@@ -163,7 +163,7 @@ module.exports = function (defaultFuncs, api, ctx) {
 
     if (typeof msg == 'function') {
       var error = 'Msg must be a string or object and not function';
-      console.error('createPost', error);
+      utils.error('createPost', error);
       return msg(error);
     }
     if (typeof callback == 'function') cb = callback;
@@ -171,7 +171,7 @@ module.exports = function (defaultFuncs, api, ctx) {
     var typeMsg = utils.getType(msg);
     if (!['Object', 'String'].includes(typeMsg)) {
       var error = 'Msg must be a string or object and not ' + typeMsg;
-      console.error('createPost', error);
+      utils.error('createPost', error);
       return cb(error);
     } else if (typeMsg == 'String') msg = { body: msg };
     msg.allowUserID = msg.allowUserID ? !Array.isArray(msg.allowUserID) ? [msg.allowUserID] : msg.allowUserID : null;
@@ -266,7 +266,7 @@ module.exports = function (defaultFuncs, api, ctx) {
         return cb(null, (res[0] || res).data.story_create.story.url);
       })
       .catch((err) => {
-        //console.error('createPost', err);
+        //utils.error('createPost', err);
         return cb(err);
       });
 

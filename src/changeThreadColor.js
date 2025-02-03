@@ -56,7 +56,7 @@ module.exports = function (defaultFuncs, api, ctx) {
         return callback();
       })
       .catch(function (err) {
-        console.error("changeThreadColor", err);
+        utils.error("changeThreadColor", err);
         return callback(err);
       });
 

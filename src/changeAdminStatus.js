@@ -94,7 +94,7 @@ module.exports = function (defaultFuncs, api, ctx) {
         callback();
       })
       .catch(function (err) {
-        console.error("changeAdminStatus", err);
+        utils.error("changeAdminStatus", err);
         return callback(err);
       });
 

@@ -47,7 +47,7 @@ module.exports = function (defaultFuncs, api, ctx) {
         return callback();
       })
       .catch(function (err) {
-        console.error("deleteMessage", err);
+        utils.error("deleteMessage", err);
         return callback(err);
       });
 

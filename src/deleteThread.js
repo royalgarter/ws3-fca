@@ -47,7 +47,7 @@ module.exports = function (defaultFuncs, api, ctx) {
         return callback();
       })
       .catch(function (err) {
-        console.error("deleteThread", err);
+        utils.error("deleteThread", err);
         return callback(err);
       });
 

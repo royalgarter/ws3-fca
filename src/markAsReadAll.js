@@ -41,7 +41,7 @@ module.exports = function (defaultFuncs, api, ctx) {
         return callback();
       })
       .catch(function (err) {
-        console.error("markAsReadAll", err);
+        utils.error("markAsReadAll", err);
         return callback(err);
       });
 

@@ -79,7 +79,7 @@ module.exports = function (defaultFuncs, api, ctx) {
         );
       })
       .catch(function (err) {
-        console.error("createNewGroup", err);
+        utils.error("createNewGroup", err);
         return callback(err);
       });
 

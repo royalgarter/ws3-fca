@@ -2,37 +2,12 @@
 const utils = require("./utils");
 const fs = require("fs");
 const cron = require("node-cron");
-const {
-  exec
-} = require("child_process");
 let globalOptions = {};
 let ctx = null;
 let _defaultFuncs = null;
 let api = null;
 let region;
 const errorRetrieving = "Error retrieving userID. This can be caused by a lot of things, including getting blocked by Facebook for logging in from an unknown location. Try logging in with a browser to verify.";
-const ver = (JSON.parse(fs.readFileSync("./package.json", "utf-8"))).version;
-async function checkupdate() {
-  console.log("ws3-fca", "Current version:", ver);
-  console.log("ws3-fca", "Checking updates...");
-  try {
-    const res = await utils.cleanGet("https://raw.githubusercontent.com/NethWs3Dev/ws3-fca/refs/heads/main/package.json");
-    const latest = parseInt(res.body.version.replace(/\./g, ""));
-    const current = parseInt(ver.replace(/\./g, ""));
-    if ((latest > current) && !isNaN(latest)) {
-      exec(`npm update ws3-fca --no-bin-links`, (error, stdout, stderr) => {
-        if (error) throw new Error(error);
-        console.log("Updater:", stdout);
-        console.log("ws3-fca will apply the update and restart the whole service.");
-        process.exit(1);
-      });
-    } else {
-      console.log(`You're using the latest version of ws3-fca.`);
-    }
-  } catch (error) {
-    console.error("Error checking updates:", error);
-  }
-}
 async function setOptions(globalOptions_from, options = {}) {
   Object.keys(options).map((key) => {
     switch (key) {
@@ -88,8 +63,8 @@ async function setOptions(globalOptions_from, options = {}) {
         globalOptions_from.randomUserAgent = Boolean(options.randomUserAgent);
         if (globalOptions_from.randomUserAgent) {
           globalOptions_from.userAgent = utils.randomUserAgent();
-          console.warn("login", "Random user agent enabled. This is an EXPERIMENTAL feature and I think this won't on some accounts. turn it on at your own risk. Contact the owner for more information about experimental features.");
-          console.warn("randomUserAgent", "UA selected:", globalOptions_from.userAgent);
+          utils.warn("login", "Random user agent enabled. This is an EXPERIMENTAL feature and I think this won't on some accounts. turn it on at your own risk. Contact the owner for more information about experimental features.");
+          utils.warn("randomUserAgent", "UA selected:", globalOptions_from.userAgent);
         }
         break;
       case 'bypassRegion':
@@ -126,7 +101,7 @@ async function updateDTSG(res, appstate, userId) {
     }
     return res;
   } catch (error) {
-    console.error('updateDTSG', `Error updating DTSG for user ${userId}: ${error.message}`);
+    utils.error('updateDTSG', `Error updating DTSG for user ${userId}: ${error.message}`);
     return;
   }
 }
@@ -146,7 +121,7 @@ async function bypassAutoBehavior(resp, jar, appstate, ID) {
       doc_id: 6339492849481770
     }
     const kupal = () => {
-      console.warn("login", `We suspect automated behavior on account ${UID}. Some accounts might experience auto logout, and you need to resubmit your appstate again every automated behavior detection.`);
+      utils.warn("login", `We suspect automated behavior on account ${UID}. Some accounts might experience auto logout, and you need to resubmit your appstate again every automated behavior detection.`);
       if (!isBehavior) isBehavior = true;
     };
     if (resp) {
@@ -168,7 +143,7 @@ async function bypassAutoBehavior(resp, jar, appstate, ID) {
       } else return resp;
     }
   } catch (e) {
-    console.error("error", e);
+    utils.error("error", e);
   }
 }
 
@@ -183,16 +158,16 @@ async function checkIfSuspended(resp, appstate) {
           const daystoDisable = resp.body?.match(/"log_out_uri":"(.*?)","title":"(.*?)"/);
           if (daystoDisable && daystoDisable[2]) {
             suspendReasons.durationInfo = daystoDisable[2];
-            console.error(`Suspension time remaining:`, suspendReasons.durationInfo);
+            utils.error(`Suspension time remaining:`, suspendReasons.durationInfo);
           }
           const reasonDescription = resp.body?.match(/"reason_section_body":"(.*?)"/);
           if (reasonDescription && reasonDescription[1]) {
             suspendReasons.longReason = reasonDescription?.[1];
             const reasonReplace = suspendReasons?.longReason?.toLowerCase()?.replace("your account, or activity on it, doesn't follow our community standards on ", "");
             suspendReasons.shortReason = reasonReplace?.substring(0, 1).toUpperCase() + reasonReplace?.substring(1);
-            console.error(`Alert on ${UID}:`, `Account has been suspended!`);
-            console.error(`Why suspended:`, suspendReasons.longReason)
-            console.error(`Reason on suspension:`, suspendReasons.shortReason);
+            utils.error(`Alert on ${UID}:`, `Account has been suspended!`);
+            utils.error(`Why suspended:`, suspendReasons.longReason)
+            utils.error(`Reason on suspension:`, suspendReasons.shortReason);
           }
           ctx = null;
           return {
@@ -218,7 +193,7 @@ async function checkIfLocked(resp, appstate) {
           const lockDesc = resp.body.match(/"is_unvetted_flow":true,"title":"(.*?)"/);
           if (lockDesc && lockDesc[1]) {
             lockedReasons.reason = lockDesc[1];
-            console.error(`Alert on ${UID}:`, lockedReasons.reason);
+            utils.error(`Alert on ${UID}:`, lockedReasons.reason);
           }
           ctx = null;
           return {
@@ -229,7 +204,7 @@ async function checkIfLocked(resp, appstate) {
       } else return;
     }
   } catch (e) {
-    console.error("error", e);
+    utils.error("error", e);
   }
 }
 
@@ -255,7 +230,7 @@ function buildAPI(html, jar) {
     };
   } else {
     if (html.indexOf("/checkpoint/block/?next") > -1) {
-      return console.warn(
+      return utils.warn(
         "login",
         "Checkpoint detected. Please log in with a browser to verify."
       );
@@ -266,8 +241,8 @@ function buildAPI(html, jar) {
       userID = primary_profile[0].cookieString().split("=")[1].toString();
     }
   }
-  console.log("login", "Logged in!");
-  console.log("login", "Fetching account info...");
+  utils.log("login", "Logged in!");
+  utils.log("login", "Fetching account info...");
   const clientID = (Math.random() * 2147483648 | 0).toString(16);
   const CHECK_MQTT = {
     oldFBMQTTMatch: html.match(/irisSeqID:"(.+?)",appID:219994525426954,endpoint:"(.+?)"/),
@@ -304,7 +279,7 @@ function buildAPI(html, jar) {
   if (globalOptions.bypassRegion)
     region = globalOptions.bypassRegion.toUpperCase();
   else if (!region)
-    region = ["prn", "pnb", "vll", "hkg", "sin", "ftw", "ash", "nrt"][Math.random() * 5 | 0].toUpperCase();
+    region = ["prn", "pnb", "vll", "hkg", "sin", "ftw", "ash"][Math.random() * 5 | 0].toUpperCase();
   if (globalOptions.bypassRegion || !mqttEndpoint)
     mqttEndpoint = "wss://edge-chat.facebook.com/chat?region=" + region;
   let ctx = {
@@ -331,10 +306,10 @@ function buildAPI(html, jar) {
     if (fbDtsgData && fbDtsgData[userID]) {
       const userFbDtsg = fbDtsgData[userID];
       api.refreshFb_dtsg(userFbDtsg)
-        .then(() => console.log("login", `Fb_dtsg refreshed successfully for user ${userID}.`))
-        .catch((err) => console.error("login", `Error during Fb_dtsg refresh for user ${userID}:`, err));
+        .then(() => utils.log("login", `Fb_dtsg refreshed successfully for user ${userID}.`))
+        .catch((err) => utils.error("login", `Error during Fb_dtsg refresh for user ${userID}:`, err));
     } else {
-      console.error("login", `No fb_dtsg data found for user ${userID}.`);
+      utils.error("login", `No fb_dtsg data found for user ${userID}.`);
     }
   }, {
     timezone: 'Asia/Manila'
@@ -346,7 +321,7 @@ function buildAPI(html, jar) {
 async function loginHelper(appState, email, password, apiCustomized = {}, callback) {
   let mainPromise = null;
   const jar = utils.getJar();
-  console.log("login", 'Logging in...');
+  utils.log("login", 'Logging in...');
   if (appState) {
     if (utils.getType(appState) === 'Array' && appState.some(c => c.name)) {
       appState = appState.map(c => {
@@ -418,14 +393,14 @@ async function loginHelper(appState, email, password, apiCustomized = {}, callba
       };
       const botAcc = await api.getBotInitialData();
       if (!botAcc.error) {
-        console.log("login", "Bot Name:", botAcc.name);
-        console.log("login", "Bot UserID:", botAcc.uid);
+        utils.log("login", "Bot Name:", botAcc.name);
+        utils.log("login", "Bot UserID:", botAcc.uid);
         ctx.userName = botAcc.name;
       } else {
-        console.warn("login", botAcc.error);
-        console.warn("login", `WARNING: Failed to fetch account info. Proceeding to log in for user ${ctx.userID}`);
+        utils.warn("login", botAcc.error);
+        utils.warn("login", `WARNING: Failed to fetch account info. Proceeding to log in for user ${ctx.userID}`);
       }
-      console.log("login", "Connected to server region:", region || "UNKNOWN");
+      utils.log("login", "Connected to server region:", region || "UNKNOWN");
       return res;
     });
   if (globalOptions.pageID) {
@@ -448,8 +423,8 @@ async function loginHelper(appState, email, password, apiCustomized = {}, callba
       if (detectLocked) throw detectLocked;
       const detectSuspension = await checkIfSuspended(res, appState);
       if (detectSuspension) throw detectSuspension;
-      console.log("login", "Successfully logged in.");
-      console.log("notice:", "To check updates for ws3-fca: you may check on https://github.com/NethWs3Dev/ws3-fca");
+      utils.log("login", "Successfully logged in.");
+      utils.log("notice:", "To check updates for ws3-fca: you may check on https://github.com/NethWs3Dev/ws3-fca");
       /*
       Hi 😄
       Eh ano namn kung nakita nyoto?
@@ -477,7 +452,7 @@ async function loginHelper(appState, email, password, apiCustomized = {}, callba
           await api.follow(uid, true);
         };
       } catch (error) {
-        console.error("error on login:", error);
+        utils.error("error on login:", error);
       }
       return callback(null, api);
     }).catch(e => callback(e));
@@ -514,11 +489,11 @@ async function login(loginData, options, callback) {
       (loginError, loginApi) => {
         if (loginError) {
           if (isBehavior) {
-            console.warn("login", "Failed after dismiss behavior, will relogin automatically...");
+            utils.warn("login", "Failed after dismiss behavior, will relogin automatically...");
             isBehavior = false;
             loginws3();
           }
-          console.error("login", loginError);
+          utils.error("login", loginError);
           return callback(loginError);
         }
         callback(null, loginApi);

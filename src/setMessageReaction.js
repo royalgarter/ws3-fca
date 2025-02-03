@@ -113,7 +113,7 @@ module.exports = function (defaultFuncs, api, ctx) {
         callback(null);
       })
       .catch(function (err) {
-        console.error("setReaction", err);
+        utils.error("setReaction", err);
         return callback(err);
       });
 

@@ -45,7 +45,7 @@ module.exports = function (defaultFuncs, api, ctx) {
           callback(null, resData.body.toString());
         })
         .catch(function (err) {
-          console.error("httpPost", err);
+          utils.error("httpPost", err);
           return callback(err);
         });
     } else {
@@ -55,7 +55,7 @@ module.exports = function (defaultFuncs, api, ctx) {
           callback(null, resData.body.toString());
           })
         .catch(function (err) {
-          console.error("httpPost", err);
+          utils.error("httpPost", err);
           return callback(err);
         });
     }

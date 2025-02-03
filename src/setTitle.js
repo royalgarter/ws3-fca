@@ -81,7 +81,7 @@ module.exports = function (defaultFuncs, api, ctx) {
         return callback();
       })
       .catch(function (err) {
-        console.error("setTitle", err);
+        utils.error("setTitle", err);
         return callback(err);
       });
 

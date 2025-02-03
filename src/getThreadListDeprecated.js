@@ -61,14 +61,14 @@ module.exports = function(defaultFuncs, api, ctx) {
         if (resData.error) {
           throw resData;
         }
-        console.log("getThreadList", JSON.stringify(resData.payload.threads));
+        utils.log("getThreadList", JSON.stringify(resData.payload.threads));
         return callback(
           null,
           (resData.payload.threads || []).map(utils.formatThread)
         );
       })
       .catch(function(err) {
-        console.error("getThreadList", err);
+        utils.error("getThreadList", err);
         return callback(err);
       });
   };

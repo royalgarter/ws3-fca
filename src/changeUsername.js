@@ -11,13 +11,13 @@ module.exports = function (defaultFuncs, api, ctx) {
 
     if (typeof username == 'function') {
      var error = 'username must be a string, and not ' + utils.getType(username);
-      console.error('changeUsername', error);
+      utils.error('changeUsername', error);
       return username(error);
     }
     if (typeof callback == 'function') cb = callback;
     if (typeof username != 'string') {
       var error = 'username must be a string, and not ' + utils.getType(username);
-      console.error('changeUsername', error);
+      utils.error('changeUsername', error);
       return cb(error);
     }
 
@@ -49,7 +49,7 @@ module.exports = function (defaultFuncs, api, ctx) {
         return cb();
       })
       .catch(function (err) {
-        console.error('changeUsername', err);
+        utils.error('changeUsername', err);
         return cb(err);
       });
     

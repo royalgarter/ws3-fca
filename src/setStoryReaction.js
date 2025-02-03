@@ -53,7 +53,7 @@ module.exports = function(defaultFuncs, api, ctx) {
         return cb();
       })
       .catch(function(err) {
-        console.error('setPostReaction', err);
+        utils.error('setPostReaction', err);
         return cb(err);
       });
 

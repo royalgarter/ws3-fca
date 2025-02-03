@@ -26,7 +26,7 @@ module.exports = function (defaultFuncs, api, ctx) {
 
     var { first_name, middle_name, last_name } = input;
     if (!first_name || !last_name) {
-      console.error('changeName', 'name is not be accepted');
+      utils.error('changeName', 'name is not be accepted');
       return cb('name is not be accepted');
     }
 
@@ -69,7 +69,7 @@ module.exports = function (defaultFuncs, api, ctx) {
         return cb();
       })
       .catch(function (err) {
-        console.error('changeName', err);
+        utils.error('changeName', err);
         return cb(err);
       });
 

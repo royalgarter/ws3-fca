@@ -61,7 +61,7 @@ module.exports = function (defaultFuncs, api, ctx) {
         return callback(null, formatData(resData.payload.profiles));
       })
       .catch(function (err) {
-        console.error("getUserInfo", err);
+        utils.error("getUserInfo", err);
         return callback(err);
       });
 

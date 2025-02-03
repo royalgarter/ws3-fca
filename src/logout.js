@@ -62,11 +62,11 @@ module.exports = function (defaultFuncs, api, ctx) {
       })
       .then(function () {
         ctx.loggedIn = false;
-        console.log("logout", "Logged out successfully.");
+        utils.log("logout", "Logged out successfully.");
         callback();
       })
       .catch(function (err) {
-        console.error("logout", err);
+        utils.error("logout", err);
         return callback(err);
       });
 

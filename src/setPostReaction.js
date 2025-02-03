@@ -99,7 +99,7 @@ module.exports = function (defaultFuncs, api, ctx) {
         return callback(null, formatData(resData.data));
       })
       .catch(function (err) {
-        console.error("setPostReaction", err);
+        utils.error("setPostReaction", err);
         return callback(err);
       });
 

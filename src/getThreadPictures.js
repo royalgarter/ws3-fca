@@ -71,7 +71,7 @@ module.exports = function (defaultFuncs, api, ctx) {
         callback(null, resData);
       })
       .catch(function (err) {
-        console.error("Error in getThreadPictures", err);
+        utils.error("Error in getThreadPictures", err);
         callback(err);
       });
     return returnPromise;

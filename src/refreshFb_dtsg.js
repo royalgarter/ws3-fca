@@ -71,7 +71,7 @@ module.exports = function (defaultFuncs, api, ctx) {
           });
         })
         .catch(function (err) {
-          console.error("refreshFb_dtsg", err);
+          utils.error("refreshFb_dtsg", err);
           return callback(err);
         });
     } else {

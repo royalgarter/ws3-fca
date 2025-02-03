@@ -49,7 +49,7 @@ module.exports = function (defaultFuncs, api, ctx) {
         return callback();
       })
       .catch(function (err) {
-        console.error("markAsSeen", err);
+        utils.error("markAsSeen", err);
         if (utils.getType(err) == "Object" && err.error === "Not logged in.") {
           ctx.loggedIn = false;
         }

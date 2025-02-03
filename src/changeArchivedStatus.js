@@ -46,7 +46,7 @@ module.exports = function (defaultFuncs, api, ctx) {
         return callback();
       })
       .catch(function (err) {
-        console.error("changeArchivedStatus", err);
+        utils.error("changeArchivedStatus", err);
         return callback(err);
       });
 

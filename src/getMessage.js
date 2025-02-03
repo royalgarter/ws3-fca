@@ -294,7 +294,7 @@ module.exports = function (defaultFuncs, api, ctx) {
         }
       })
       .catch((err) => {
-        console.error("getMessage", err);
+        utils.error("getMessage", err);
         callback(err);
       });
 

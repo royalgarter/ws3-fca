@@ -44,7 +44,7 @@ module.exports = function (http, api, ctx) {
         return cb(null, res.data.sticker_search.sticker_results.edges.map(formatData));
       })
       .catch(function (err) {
-        console.error('searchStickers', err);
+        utils.error('searchStickers', err);
         return cb(err);
       });
     return returnPromise;

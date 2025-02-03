@@ -84,7 +84,7 @@ module.exports = function(defaultFuncs, api, ctx) {
           });
         })
         .catch(function(err) {
-          console.error("getThreadHistory", err);
+          utils.error("getThreadHistory", err);
           return callback(err);
         });
     });

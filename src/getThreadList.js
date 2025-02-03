@@ -152,7 +152,7 @@ function formatThreadGraphQLResponse(messageThread) {
 }
 
 function formatThreadList(data) {
-  // console.log(JSON.stringify(data.find(t => t.thread_key.thread_fbid === "5095817367161431"), null, 2));
+  // utils.log(JSON.stringify(data.find(t => t.thread_key.thread_fbid === "5095817367161431"), null, 2));
   return data.map((t) => formatThreadGraphQLResponse(t));
 }
 
@@ -261,7 +261,7 @@ module.exports = function (defaultFuncs, api, ctx) {
         );
       })
       .catch((err) => {
-        console.error("getThreadList", err);
+        utils.error("getThreadList", err);
         return callback(err);
       });
 

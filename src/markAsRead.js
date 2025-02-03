@@ -48,7 +48,7 @@ module.exports = function (defaultFuncs, api, ctx) {
 
       if (resData.error) {
         const err = resData.error;
-        console.error("markAsRead", err);
+        utils.error("markAsRead", err);
         callback(err);
         return err;
       }

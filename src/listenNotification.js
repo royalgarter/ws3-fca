@@ -51,7 +51,7 @@ module.exports = function (defaultFuncs, api, ctx) {
           return format(res.data.viewer, globalCallback);
         })
         .catch(function (err) {
-          console.error('listenNotification', err);
+          utils.error('listenNotification', err);
           clearInterval(interval);
           interval = void 0;
           return globalCallback(err);

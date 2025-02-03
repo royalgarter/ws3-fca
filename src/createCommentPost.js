@@ -134,12 +134,12 @@ module.exports = function (defaultFuncs, api, ctx) {
 
     if (typeof msg == 'function') {
       var error = 'Message must be a string or object!!';
-      console.error('createCommentPost', error);
+      utils.error('createCommentPost', error);
       return msg(error);
     }
     if (typeof postID == 'function') {
       var error = 'postID must be a string!!';
-      console.error('createCommentPost', error);
+      utils.error('createCommentPost', error);
       return postID(error);
     }
     if (typeof callback == 'string') {
@@ -166,12 +166,12 @@ module.exports = function (defaultFuncs, api, ctx) {
       msg.body ? typeof msg.body == 'object' ? msg.body = JSON.stringify(msg.body) : null : msg.body = '';
     } else {
       var error = 'Message must be a string or object!!';
-      console.error('createCommentPost', error);
+      utils.error('createCommentPost', error);
       return cb(error);
     }
     if (typeof postID != 'string') {
       var error = 'postID must be a string!!';
-      console.error('createCommentPost', error);
+      utils.error('createCommentPost', error);
       return cb(error);
     }
 
@@ -220,7 +220,7 @@ module.exports = function (defaultFuncs, api, ctx) {
       .then(_ => createContent(form))
       .then(info => cb(null, info))
       .catch(function (err) {
-        console.error('createCommentPost', err);
+        utils.error('createCommentPost', err);
         return cb(null, err);
       })
 

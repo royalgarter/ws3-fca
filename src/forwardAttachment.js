@@ -51,7 +51,7 @@ module.exports = function (defaultFuncs, api, ctx) {
         return callback();
       })
       .catch(function (err) {
-        console.error("forwardAttachment", err);
+        utils.error("forwardAttachment", err);
         return callback(err);
       });
 
