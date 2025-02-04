@@ -68,7 +68,9 @@ module.exports = (defaultFuncs, api, ctx) => {
       .then(utils.parseAndCheckLogin(ctx, defaultFuncs))
       .then(resData => {
         if (resData?.error && resData?.error !== 3252001) throw resData;
-        return callback(null, formatData(resData?.payload?.profiles ?? id));
+        const kupal = formatData(resData?.payload?.profiles ?? id);
+        utils.log(kupal);
+        return callback(null, kupal);
       })
       .catch(err => {
         utils.error("getUserInfo", err);

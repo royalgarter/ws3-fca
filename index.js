@@ -63,7 +63,7 @@ async function setOptions(globalOptions_from, options = {}) {
         globalOptions_from.randomUserAgent = Boolean(options.randomUserAgent);
         if (globalOptions_from.randomUserAgent) {
           globalOptions_from.userAgent = utils.randomUserAgent();
-          utils.warn("login", "Random user agent enabled. This is an EXPERIMENTAL feature and I think this won't on some accounts. turn it on at your own risk. Contact the owner for more information about experimental features.");
+          utils.warn("Random user agent enabled. This is an EXPERIMENTAL feature and I think this won't on some accounts. turn it on at your own risk. Contact the owner for more information about experimental features.");
           utils.warn("randomUserAgent", "UA selected:", globalOptions_from.userAgent);
         }
         break;
@@ -121,7 +121,7 @@ async function bypassAutoBehavior(resp, jar, appstate, ID) {
       doc_id: 6339492849481770
     }
     const kupal = () => {
-      utils.warn("login", `We suspect automated behavior on account ${UID}. Some accounts might experience auto logout, and you need to resubmit your appstate again every automated behavior detection.`);
+      utils.warn(`We suspect automated behavior on account ${UID}. Some accounts might experience auto logout, and you need to resubmit your appstate again every automated behavior detection.`);
       if (!isBehavior) isBehavior = true;
     };
     if (resp) {
@@ -241,8 +241,8 @@ function buildAPI(html, jar) {
       userID = primary_profile[0].cookieString().split("=")[1].toString();
     }
   }
-  utils.log("login", "Logged in!");
-  utils.log("login", "Fetching account info...");
+  utils.log("Logged in!");
+  utils.log("Fetching account info...");
   const clientID = (Math.random() * 2147483648 | 0).toString(16);
   const CHECK_MQTT = {
     oldFBMQTTMatch: html.match(/irisSeqID:"(.+?)",appID:219994525426954,endpoint:"(.+?)"/),
@@ -306,10 +306,10 @@ function buildAPI(html, jar) {
     if (fbDtsgData && fbDtsgData[userID]) {
       const userFbDtsg = fbDtsgData[userID];
       api.refreshFb_dtsg(userFbDtsg)
-        .then(() => utils.log("login", `Fb_dtsg refreshed successfully for user ${userID}.`))
-        .catch((err) => utils.error("login", `Error during Fb_dtsg refresh for user ${userID}:`, err));
+        .then(() => utils.log(`Fb_dtsg refreshed successfully for user ${userID}.`))
+        .catch((err) => utils.error(`Error during Fb_dtsg refresh for user ${userID}:`, err));
     } else {
-      utils.error("login", `No fb_dtsg data found for user ${userID}.`);
+      utils.error(`No fb_dtsg data found for user ${userID}.`);
     }
   }, {
     timezone: 'Asia/Manila'
@@ -321,7 +321,7 @@ function buildAPI(html, jar) {
 async function loginHelper(appState, email, password, apiCustomized = {}, callback) {
   let mainPromise = null;
   const jar = utils.getJar();
-  utils.log("login", 'Logging in...');
+  utils.log('Logging in...');
   if (appState) {
     if (utils.getType(appState) === 'Array' && appState.some(c => c.name)) {
       appState = appState.map(c => {
@@ -393,14 +393,14 @@ async function loginHelper(appState, email, password, apiCustomized = {}, callba
       };
       const bi = await api.getBotInitialData();
       if (!bi.error) {
-        utils.log("login", "Hello,", bi.name);
-        utils.log("login", "My User ID:", bi.uid);
+        utils.log("Hello,", bi.name);
+        utils.log("My User ID:", bi.uid);
         ctx.userName = bi.name;
       } else {
-        utils.warn("login", bi.error);
-        utils.warn("login", `WARNING: Failed to fetch account info. Proceeding to log in for user ${ctx.userID}`);
+        utils.warn(bi.error);
+        utils.warn(`WARNING: Failed to fetch account info. Proceeding to log in for user ${ctx.userID}`);
       }
-      utils.log("login", "Connected to server region:", region || "UNKNOWN");
+      utils.log("Connected to server region:", region || "UNKNOWN");
       return res;
     });
   if (globalOptions.pageID) {
@@ -423,7 +423,7 @@ async function loginHelper(appState, email, password, apiCustomized = {}, callba
       if (detectLocked) throw detectLocked;
       const detectSuspension = await checkIfSuspended(res, appState);
       if (detectSuspension) throw detectSuspension;
-      utils.log("login", "Successfully logged in.");
+      utils.log("Successfully logged in.");
       utils.log("notice:", "To check updates: you may check on https://github.com/NethWs3Dev/ws3-fca");
       /*
       Hi 😄
@@ -489,7 +489,7 @@ async function login(loginData, options, callback) {
       (loginError, loginApi) => {
         if (loginError) {
           if (isBehavior) {
-            utils.warn("login", "Failed after dismiss behavior, will relogin automatically...");
+            utils.warn("Failed after dismiss behavior, will relogin automatically...");
             isBehavior = false;
             loginws3();
           }

@@ -23,8 +23,6 @@ See [below](#projects-using-this-api) for projects using this API.
 ![Image](https://i.imgur.com/R0lzR6R.jpeg)
 ![Image](https://i.imgur.com/PPE3fB5.jpeg)
 
-No need to put on listenMqtt.
-
 - [X] Added api.ws3.relogin()
 - [X] Added api.stopListenMqtt()
 - [X] Added api.getRegion()
@@ -35,12 +33,12 @@ No need to put on listenMqtt.
 - [X] Added a detection if it's locked or suspended (*will show the information about the lock/suspension*)
 - [X] Added randomUserAgent on setOptions (*experimental*)
 - [X] Added bypassRegion on setOptions (*choose between PRN, PNB, HKG, SYD, VLL, LLA, SIN..., experimental*)
-- [X] Fixed userAgent on all mqttEvents
+- [X] Added a userAgent that has a possibility for less logout on accounts (*contributor to jonellcc*)
 - [X] Tested on Mirai/Autobot (*try on Xavia or Goat*)
 
 
 > You can use cookies editor available in kiwi browser, edge and chrome extension for PC.
-We the ws3-fca team/contributors are recommending you to use the Firefox app for less logout, or use this website if you have no access on these browsers specially iOS user. Use [Appstate Getter here](https://joncll.serv00.net/apst.html)
+We the ws3-fca team/contributors are recommending you to use the Firefox app for less logout, or use this website if you have no access on these browsers specially iOS user. Use [Appstate Getter here](https://not-available-yet)
 
 # ❓ FAQ's:
 <div align="left">
@@ -239,4 +237,3 @@ login({appState: JSON.parse(fs.readFileSync('appstate.json', 'utf8'))}, (err, ap
 - [messenger-auto-reply](https://gitlab.com/theSander/messenger-auto-reply) - An auto-reply service for Messenger.
 - [BotCore](https://github.com/AstroCB/BotCore) – A collection of tools for writing and managing Facebook Messenger bots.
 - [mnotify](https://github.com/AstroCB/mnotify) – A command-line utility for sending alerts and notifications through Facebook Messenger.
-- Salamat sa mga ownersv2
