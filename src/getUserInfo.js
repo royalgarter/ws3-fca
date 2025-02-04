@@ -61,7 +61,7 @@ module.exports = (defaultFuncs, api, ctx) => {
               vanity: prop,
               thumbSrc: "https://i.imgur.com/xPiHPW9.jpeg",
               profileUrl: `https://www.facebook.com/profile.php?id=${prop}`,
-              gender: "Unknown",
+              gender: 0,
               type: "user",
               isFriend: false,
               isBirthday: false,

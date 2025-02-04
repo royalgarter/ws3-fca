@@ -101,7 +101,7 @@ async function updateDTSG(res, appstate, userId) {
     }
     return res;
   } catch (error) {
-    utils.error('updateDTSG', `Error updating DTSG for user ${userId}: ${error.message}`);
+    utils.error(`Error updating DTSG for user ${userId}: ${error.message}`);
     return;
   }
 }
@@ -143,7 +143,7 @@ async function bypassAutoBehavior(resp, jar, appstate, ID) {
       } else return resp;
     }
   } catch (e) {
-    utils.error("error", e);
+    utils.error(e);
   }
 }
 
@@ -242,7 +242,6 @@ function buildAPI(html, jar) {
     }
   }
   utils.log("Logged in!");
-  utils.log("Fetching account info...");
   const clientID = (Math.random() * 2147483648 | 0).toString(16);
   const CHECK_MQTT = {
     oldFBMQTTMatch: html.match(/irisSeqID:"(.+?)",appID:219994525426954,endpoint:"(.+?)"/),
@@ -424,7 +423,7 @@ async function loginHelper(appState, email, password, apiCustomized = {}, callba
       const detectSuspension = await checkIfSuspended(res, appState);
       if (detectSuspension) throw detectSuspension;
       utils.log("Successfully logged in.");
-      utils.log("notice:", "To check updates: you may check on https://github.com/NethWs3Dev/ws3-fca");
+      utils.log("To check updates: you may check on https://github.com/NethWs3Dev/ws3-fca");
       /*
       Hi 😄
       Eh ano namn kung nakita nyoto?

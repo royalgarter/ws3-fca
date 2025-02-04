@@ -19,6 +19,7 @@ module.exports = (defaultFuncs, api, ctx) => {
         resolveFunc(data);
       };
   }
+  utils.log("Fetching account info...");
   api.httpGet(`https://www.facebook.com/profile.php?id=${ctx.userID}`, null, {
     customUserAgent: utils.windowsUserAgent
   }, (err, data) => {
