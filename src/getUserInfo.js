@@ -5,41 +5,25 @@ const utils = require("../utils");
 function formatData(data) {
   const retObj = {};
   for (const prop in data) {
-    // eslint-disable-next-line no-prototype-builtins
-    if (data.hasOwnProperty(prop)) {
+    if (Object.prototype.hasOwnProperty.call(data, prop)) {
       const innerObj = data[prop];
       retObj[prop] = {
-        name: innerObj.name,
-        firstName: innerObj.firstName,
-        vanity: innerObj.vanity,
-        thumbSrc: innerObj.thumbSrc,
-        profileUrl: innerObj.uri,
-        gender: innerObj.gender,
-        type: innerObj.type,
-        isFriend: innerObj.is_friend,
+        name: innerObj.name || "Facebook User",
+        firstName: innerObj.firstName || "Facebook",
+        vanity: innerObj.vanity || prop,
+        thumbSrc: innerObj.thumbSrc || "https://i.imgur.com/xPiHPW9.jpeg",
+        profileUrl: innerObj.uri || `https://www.facebook.com/profile.php?id=${prop}`,
+        gender: innerObj.gender || "[unknown-gender]",
+        type: innerObj.type || "user",
+        isFriend: innerObj.is_friend || false,
         isBirthday: !!innerObj.is_birthday,
-        searchTokens: innerObj.searchTokens,
-        alternateName: innerObj.alternateName
+        searchTokens: innerObj.searchTokens || ["User", "Facebook"],
+        alternateName: innerObj.alternateName || '',
       };
-    } else {
-      retObj[prop] = {
-        name: "Facebook User",
-        firstName: "Facebook",
-        vanity: prop,
-        thumbSrc: "https://i.imgur.com/xPiHPW9.jpeg",
-        profileUrl: `https://www.facebook.com/profile.php?id=${prop}`,
-        gender: "[unknown-gender]",
-        type: "acc",
-        isFriend: false,
-        isBirthday: false,
-        searchTokens: [],
-        alternateName: ""
-      }
     }
   }
   return retObj;
 }
-
 module.exports = (defaultFuncs, api, ctx) => {
   return (id, callback) => {
     let resolveFunc = () => {};
@@ -68,8 +52,8 @@ module.exports = (defaultFuncs, api, ctx) => {
       .then(utils.parseAndCheckLogin(ctx, defaultFuncs))
       .then(resData => {
         if (resData?.error && resData?.error !== 3252001) throw resData;
-        const kupal = formatData(resData?.payload?.profiles ?? id);
-        utils.log(kupal);
+        const profiles = resData?.payload?.profiles;
+        const kupal = formatData(profiles ?? {...id});
         return callback(null, kupal);
       })
       .catch(err => {
