@@ -3,25 +3,23 @@
 const utils = require("../utils");
 // Fixed by @NethWs3Dev
 function formatData(data) {
+  const fullObj = Object.keys(data);
   const retObj = {};
-  for (const prop in data) {
-    if (Object.prototype.hasOwnProperty.call(data, prop)) {
-      const innerObj = data[prop];
-      retObj[prop] = {
-        name: innerObj.name || "Facebook User",
-        firstName: innerObj.firstName || "Facebook",
-        vanity: innerObj.vanity || prop,
-        thumbSrc: innerObj.thumbSrc || "https://i.imgur.com/xPiHPW9.jpeg",
-        profileUrl: innerObj.uri || `https://www.facebook.com/profile.php?id=${prop}`,
-        gender: innerObj.gender || "[unknown-gender]",
-        type: innerObj.type || "user",
-        isFriend: innerObj.is_friend || false,
-        isBirthday: !!innerObj.is_birthday,
-        searchTokens: innerObj.searchTokens || ["User", "Facebook"],
-        alternateName: innerObj.alternateName || '',
-      };
-    }
-  }
+  fullObj.forEach(v => {
+    retObj[v] = data?.[v] ?? {
+      name: "Facebook User",
+      firstName: "Facebook",
+      vanity: v,
+      thumbSrc: "https://i.imgur.com/xPiHPW9.jpeg",
+      profileUrl: `https://www.facebook.com/profile.php?id=${v}`,
+      gender: "unknown",
+      type: "user",
+      isFriend: false,
+      isBirthday: false,
+      searchTokens: ["User", "Facebook"],
+      alternateName: ""
+    };
+  });
   return retObj;
 }
 module.exports = (defaultFuncs, api, ctx) => {
@@ -53,7 +51,7 @@ module.exports = (defaultFuncs, api, ctx) => {
       .then(resData => {
         if (resData?.error && resData?.error !== 3252001) throw resData;
         const profiles = resData?.payload?.profiles;
-        const kupal = formatData(profiles ?? {...id});
+        const kupal = formatData(profiles ?? id);
         return callback(null, kupal);
       })
       .catch(err => {
