@@ -2,25 +2,7 @@
 
 const utils = require("../utils");
 // Fixed by @NethWs3Dev
-function formatData(data) {
-  const retObj = {};
-  for (const v of Object.keys(data)){
-    retObj[v] = data?.[v] ?? {
-      name: "Facebook User",
-      firstName: "Facebook",
-      vanity: v,
-      thumbSrc: "https://i.imgur.com/xPiHPW9.jpeg",
-      profileUrl: `https://www.facebook.com/profile.php?id=${v}`,
-      gender: "unknown",
-      type: "user",
-      isFriend: false,
-      isBirthday: false,
-      searchTokens: ["User", "Facebook"],
-      alternateName: ""
-    };
-  }
-  return retObj;
-}
+
 module.exports = (defaultFuncs, api, ctx) => {
   return (id, callback) => {
     let resolveFunc = () => {};
@@ -49,9 +31,46 @@ module.exports = (defaultFuncs, api, ctx) => {
       .then(utils.parseAndCheckLogin(ctx, defaultFuncs))
       .then(resData => {
         if (resData?.error && resData?.error !== 3252001) throw resData;
+        const retObj = {};
         const profiles = resData?.payload?.profiles;
-        const kupal = formatData(profiles ?? id);
-        return callback(null, kupal);
+        if (profiles) {
+          for (const prop in profiles) {
+            // eslint-disable-next-line no-prototype-builtins
+            if (data.hasOwnProperty(prop)) {
+              const innerObj = data[prop];
+              retObj[prop] = {
+                name: innerObj.name,
+                firstName: innerObj.firstName,
+                vanity: innerObj.vanity,
+                thumbSrc: innerObj.thumbSrc,
+                profileUrl: innerObj.uri,
+                gender: innerObj.gender,
+                type: innerObj.type,
+                isFriend: innerObj.is_friend,
+                isBirthday: !!innerObj.is_birthday,
+                searchTokens: innerObj.searchTokens,
+                alternateName: innerObj.alternateName
+              };
+            }
+          }
+        } else {
+          for (const prop of id) {
+            retObj[prop] = {
+              name: "Facebook User",
+              firstName: "Facebook",
+              vanity: prop,
+              thumbSrc: "https://i.imgur.com/xPiHPW9.jpeg",
+              profileUrl: `https://www.facebook.com/profile.php?id=${prop}`,
+              gender: "Unknown",
+              type: "user",
+              isFriend: false,
+              isBirthday: false,
+              searchTokens: ["User", "Facebook"],
+              alternateName: ""
+            }
+          }
+        }
+        return callback(null, retObj);
       })
       .catch(err => {
         utils.error("getUserInfo", err);
