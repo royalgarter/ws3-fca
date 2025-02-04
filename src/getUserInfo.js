@@ -3,9 +3,8 @@
 const utils = require("../utils");
 // Fixed by @NethWs3Dev
 function formatData(data) {
-  const fullObj = Object.keys(data);
   const retObj = {};
-  fullObj.forEach(v => {
+  for (const v of Object.keys(data)){
     retObj[v] = data?.[v] ?? {
       name: "Facebook User",
       firstName: "Facebook",
@@ -19,7 +18,7 @@ function formatData(data) {
       searchTokens: ["User", "Facebook"],
       alternateName: ""
     };
-  });
+  }
   return retObj;
 }
 module.exports = (defaultFuncs, api, ctx) => {
