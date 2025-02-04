@@ -68,7 +68,7 @@ module.exports = (defaultFuncs, api, ctx) => {
       .then(utils.parseAndCheckLogin(ctx, defaultFuncs))
       .then(resData => {
         if (resData?.error && resData?.error !== 3252001) throw resData;
-        return callback(null, formatData(resData.payload.profiles || id));
+        return callback(null, formatData(resData?.payload?.profiles ?? id));
       })
       .catch(err => {
         utils.error("getUserInfo", err);
