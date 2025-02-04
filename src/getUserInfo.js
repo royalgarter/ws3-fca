@@ -36,8 +36,8 @@ module.exports = (defaultFuncs, api, ctx) => {
         if (profiles) {
           for (const prop in profiles) {
             // eslint-disable-next-line no-prototype-builtins
-            if (data.hasOwnProperty(prop)) {
-              const innerObj = data[prop];
+            if (profiles.hasOwnProperty(prop)) {
+              const innerObj = profiles[prop];
               retObj[prop] = {
                 name: innerObj.name,
                 firstName: innerObj.firstName,
