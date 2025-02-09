@@ -149,7 +149,7 @@ function listenMqtt(defaultFuncs, api, ctx, globalCallback) {
     mqttClient.publish("/set_client_settings", JSON.stringify({ make_user_available_when_in_foreground: true }), { qos: 1 });
     const rTimeout = setTimeout(() => {
       mqttClient.end();
-      getSeqId();
+      listenMqtt(defaultFuncs, api, ctx, globalCallback);
     }, 3000);
     ctx.tmsWait = () => {
       clearTimeout(rTimeout);

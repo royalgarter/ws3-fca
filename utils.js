@@ -69,7 +69,7 @@ function getHeaders(url, options, ctx, customHeader) {
   /*if (headers1["User-Agent"]) {
     delete headers1["User-Agent"];
     headers1["User-Agent"] = customHeader?.customUserAgent ?? options?.userAgent ?? defaultUserAgent;
-  }*/
+  */
   if (ctx && ctx.region) headers1["X-MSGR-Region"] = ctx.region;
   if (customHeader) {
     Object.assign(headers1, customHeader);
