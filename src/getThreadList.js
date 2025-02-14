@@ -1,7 +1,6 @@
 "use strict";
 
 const utils = require("../utils");
-// @NethWs3Dev
 
 function formatEventReminders(reminder) {
   return {
@@ -152,7 +151,7 @@ function formatThreadGraphQLResponse(messageThread) {
 }
 
 function formatThreadList(data) {
-  // utils.log(JSON.stringify(data.find(t => t.thread_key.thread_fbid === "5095817367161431"), null, 2));
+  // console.log(JSON.stringify(data.find(t => t.thread_key.thread_fbid === "5095817367161431"), null, 2));
   return data.map((t) => formatThreadGraphQLResponse(t));
 }
 
@@ -213,7 +212,7 @@ module.exports = function (defaultFuncs, api, ctx) {
     }
 
     const form = {
-      av: ctx.userID,
+      av: ctx.i_userID || ctx.userID,
       queries: JSON.stringify({
         o0: {
           // This doc_id was valid on 2020-07-20
