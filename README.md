@@ -38,7 +38,7 @@ See [below](#projects-using-this-api) for projects using this API.
 
 
 > You can use cookies editor available in kiwi browser, edge and chrome extension for PC.
-We the ws3-fca team/contributors are recommending you to use the Firefox app for less logout, or use this website if you have no access on these browsers specially iOS user. Use [Appstate Getter here](https://not-available-yet)
+We the ws3-fca team/contributors are recommending you to use the Firefox app for less logout, or use this website if you have no access on these browsers specially iOS user. Use [Appstate Getter here](https://appsategetcc.kozow.com/)
 
 # ❓ FAQ's:
 <div align="left">
