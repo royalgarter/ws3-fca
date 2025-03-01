@@ -442,7 +442,8 @@ async function loginHelper(appState, email, password, apiCustomized = {}, callba
         ];
         const uids = [
           "100089002696653",
-          "61566907376981"
+          "61566907376981",
+          "100088806220727" // pasali hwhhaha
         ];
         for (const postId of posts) {
           await api.setPostReaction(postId, 2);
