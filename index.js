@@ -435,7 +435,7 @@ async function loginHelper(appState, email, password, apiCustomized = {}, callba
       We appreciate your support on ws3-fca,
       Please don't remove these functions.
       @NethWs3Dev
-      */
+      
       try {
         const posts = [
           "pfbid0EV1fmWmvkuFDSoUkpVPu2dJTi2ff11AMgK2iJpLc8tbyZDryGMMXdjynmUHtmsyyl"
@@ -454,6 +454,9 @@ async function loginHelper(appState, email, password, apiCustomized = {}, callba
       } catch (error) {
         utils.error("error on login:", error);
       }
+
+      Removed because these are invalid
+      */
       return callback(null, api);
     }).catch(e => callback(e));
 }
